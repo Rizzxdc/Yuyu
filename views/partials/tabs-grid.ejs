@@ -1,0 +1,28 @@
+<div class="section-label"><span class="bar"></span> TOOLS</div>
+
+<div class="tabs">
+  <div class="tab active" data-cat="all">☰ ALL</div>
+  <div class="tab" data-cat="game"><i data-lucide="gamepad-2"></i> MINI GAME</div>
+  <div class="tab" data-cat="downloader"><i data-lucide="download"></i> DOWNLOADER</div>
+</div>
+
+<div class="grid" id="grid">
+  <% tools.game.forEach(item => { %>
+    <div class="card game" data-cat="game" data-open="<%= item.open %>">
+      <div class="card-icon"><%- item.icon %></div>
+      <div class="card-name"><%= item.name %></div>
+      <div class="card-sub"><%= item.sub %></div>
+      <div class="badge new"><%= item.badge %></div>
+      <div class="card-arrow">→</div>
+    </div>
+  <% }) %>
+  <% tools.downloader.forEach(item => { %>
+    <div class="card <%= item.disabled ? 'disabled' : 'downloader' %>" data-cat="downloader" <% if (item.open) { %>data-open="<%= item.open %>" data-platform="<%= item.platform %>"<% } %>>
+      <div class="card-icon"><%- item.icon %></div>
+      <div class="card-name"><%= item.name %></div>
+      <div class="card-sub"><%= item.sub %></div>
+      <div class="badge"><%= item.badge %></div>
+      <div class="card-arrow">→</div>
+    </div>
+  <% }) %>
+</div>

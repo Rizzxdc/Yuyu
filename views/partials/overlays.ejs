@@ -1,0 +1,123 @@
+<div class="overlay hidden" id="overlaySnake">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🐍 Snake</div>
+    <div class="g-score">Skor: <b id="snakeScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <canvas id="snakeCanvas" width="320" height="320"></canvas>
+    <div class="g-hint">Geser layar untuk ganti arah, atau pakai tombol panah keyboard</div>
+    <div class="g-actions">
+      <div class="g-btn primary" id="snakeRestart">Main Lagi</div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlay2048">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🔢 2048</div>
+    <div class="g-score">Skor: <b id="score2048">0</b></div>
+  </div>
+  <div class="g-body">
+    <div class="g2048-board" id="board2048">
+      <div class="g2048-grid">
+        <div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div>
+        <div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div>
+        <div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div>
+        <div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div>
+      </div>
+      <div class="g2048-tiles" id="tiles2048"></div>
+    </div>
+    <div class="g-hint">Geser ke kiri/kanan/atas/bawah untuk menggabungkan angka</div>
+    <div class="g-actions">
+      <div class="g-btn primary" id="restart2048">Main Lagi</div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayGravity">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🌀 Gravity Flip</div>
+    <div class="g-score">Skor: <b id="gravityScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <canvas id="gravityCanvas" width="320" height="320"></canvas>
+    <div class="g-hint">Tap layar (atau spasi) untuk balik gravitasi, hindari duri</div>
+    <div class="g-actions">
+      <div class="g-btn primary" id="gravityRestart">Main Lagi</div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayOtak">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🧠 Otak Kilat</div>
+    <div class="g-score">Level: <b id="otakScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <div class="otak-board" id="otakBoard">
+      <div class="otak-tile" data-idx="0" style="background:#ff5d6c"></div>
+      <div class="otak-tile" data-idx="1" style="background:#4f8cff"></div>
+      <div class="otak-tile" data-idx="2" style="background:#ffb648"></div>
+      <div class="otak-tile" data-idx="3" style="background:#34d17a"></div>
+    </div>
+    <div class="g-hint" id="otakHint">Perhatiin urutan warna yang nyala, lalu tiru urutannya</div>
+    <div class="g-actions">
+      <div class="g-btn primary" id="otakRestart">Main Lagi</div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayReflex">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🎯 Ketuk Refleks</div>
+    <div class="g-score">Skor: <b id="reflexScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <canvas id="reflexCanvas" width="320" height="320"></canvas>
+    <div class="g-hint">Tap lingkaran biru sebelum ring-nya abis, jangan tap yang merah — nyawa: <b id="reflexLives">3</b></div>
+    <div class="g-actions">
+      <div class="g-btn primary" id="reflexRestart">Main Lagi</div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayStack">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🏗️ Stack Tower</div>
+    <div class="g-score">Tinggi: <b id="stackScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <canvas id="stackCanvas" width="320" height="400"></canvas>
+    <div class="g-hint">Tap layar buat jatuhin balok, usahain pas sama balok di bawahnya</div>
+    <div class="g-actions">
+      <div class="g-btn primary" id="stackRestart">Main Lagi</div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayDownloader">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title" id="dlTitle">Downloader</div>
+  </div>
+  <div class="g-body" style="justify-content:flex-start; padding-top:24px;">
+    <div style="width:100%; max-width:360px; display:flex; flex-direction:column; gap:12px;">
+      <div class="dl-tip" id="dlTip">💡 Tempel link video di bawah buat mulai.</div>
+      <div class="dl-input-wrap">
+        <span class="dl-input-icon" id="dlInputIcon"></span>
+        <input type="text" id="dlUrl" class="dl-input" placeholder="Tempel link di sini...">
+      </div>
+      <div class="g-btn primary dl-search-btn" id="dlSubmit">
+        <span>Cari Video</span> <i data-lucide="search"></i>
+      </div>
+      <div id="dlResult"></div>
+    </div>
+  </div>
+</div>
+</div>
