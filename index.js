@@ -20,12 +20,18 @@ const tools = {
     { icon: '<i data-lucide="arrow-up-down"></i>', name: 'Gravity Flip', sub: 'Balik gravitasi, hindari duri', badge: 'BARU', open: 'gravity' },
     { icon: '<i data-lucide="brain"></i>', name: 'Otak Kilat', sub: 'Hafalin pola makin cepat', badge: 'BARU', open: 'otak' },
     { icon: '<i data-lucide="target"></i>', name: 'Ketuk Refleks', sub: 'Tap sebelum waktu habis', badge: 'BARU', open: 'reflex' },
-    { icon: '<i data-lucide="layers"></i>', name: 'Stack Tower', sub: 'Susun balok setinggi mungkin', badge: 'BARU', open: 'stack' }
+    { icon: '<i data-lucide="layers"></i>', name: 'Stack Tower', sub: 'Susun balok setinggi mungkin', badge: 'BARU', open: 'stack' },
+    { icon: '<i data-lucide="bird"></i>', name: 'Flappy Blok', sub: 'Tap buat terbang, hindari pipa', badge: 'BARU', open: 'flappy' },
+    { icon: '<i data-lucide="hammer"></i>', name: 'Tepuk Tikus', sub: 'Pukul tikus sebelum kabur', badge: 'BARU', open: 'mole' },
+    { icon: '<i data-lucide="layout-grid"></i>', name: 'Cocok Kartu', sub: 'Ingat posisi, cocokkan pasangan', badge: 'BARU', open: 'memory' },
+    { icon: '<i data-lucide="cherry"></i>', name: 'Iris Buah', sub: 'Geser buat iris, hindari bom', badge: 'BARU', open: 'fruit' },
+    { icon: '<i data-lucide="calculator"></i>', name: 'Hitung Cepat', sub: 'Jawab soal matematika secepatnya', badge: 'BARU', open: 'math' },
+    { icon: '<i data-lucide="footprints"></i>', name: 'Lari Dino', sub: 'Lompatin kaktus, jangan nabrak', badge: 'BARU', open: 'dino' }
   ],
   downloader: [
     { icon: '<i data-lucide="instagram"></i>', name: 'Instagram', sub: 'Download video & foto', badge: 'HD', open: 'dl-instagram', platform: 'instagram' },
     { icon: '<i data-lucide="music-2"></i>', name: 'TikTok', sub: 'No watermark', badge: 'MP4', open: 'dl-tiktok', platform: 'tiktok' },
-    { icon: '<i data-lucide="youtube"></i>', name: 'YouTube', sub: 'Video & audio HD', badge: 'MP4/MP3', open: 'dl-youtube', platform: 'youtube' }
+    { icon: '<svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#FF0000"/><path d="M9.5 8.3v7.4c0 .5.55.8 1 .55l6.4-3.7c.44-.26.44-.9 0-1.15l-6.4-3.7c-.45-.26-1 .05-1 .55z" fill="#fff"/></svg>', name: 'YouTube', sub: 'Video & audio HD', badge: 'MP4/MP3', open: 'dl-youtube', platform: 'youtube' }
   ]
 };
 
