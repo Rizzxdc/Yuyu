@@ -44,6 +44,12 @@ const overlayMemory = document.getElementById('overlayMemory');
 const overlayFruit = document.getElementById('overlayFruit');
 const overlayMath = document.getElementById('overlayMath');
 const overlayDino = document.getElementById('overlayDino');
+const overlayBrick = document.getElementById('overlayBrick');
+const overlayMeteor = document.getElementById('overlayMeteor');
+const overlayPuzzle = document.getElementById('overlayPuzzle');
+const overlayBalloon = document.getElementById('overlayBalloon');
+const overlayWord = document.getElementById('overlayWord');
+const overlayPiano = document.getElementById('overlayPiano');
 const overlayDownloader = document.getElementById('overlayDownloader');
 
 function showStartScreen(prefix){
@@ -70,6 +76,12 @@ document.querySelectorAll('[data-open]').forEach(el=>{
     if (target === 'fruit'){ overlayFruit.classList.remove('hidden'); showStartScreen('fruit'); }
     if (target === 'math'){ overlayMath.classList.remove('hidden'); showStartScreen('math'); }
     if (target === 'dino'){ overlayDino.classList.remove('hidden'); showStartScreen('dino'); }
+    if (target === 'brick'){ overlayBrick.classList.remove('hidden'); showStartScreen('brick'); }
+    if (target === 'meteor'){ overlayMeteor.classList.remove('hidden'); showStartScreen('meteor'); }
+    if (target === 'puzzle'){ overlayPuzzle.classList.remove('hidden'); showStartScreen('puzzle'); }
+    if (target === 'balloon'){ overlayBalloon.classList.remove('hidden'); showStartScreen('balloon'); }
+    if (target === 'word'){ overlayWord.classList.remove('hidden'); showStartScreen('word'); }
+    if (target === 'piano'){ overlayPiano.classList.remove('hidden'); showStartScreen('piano'); }
     if (target && target.startsWith('dl-')){ overlayDownloader.classList.remove('hidden'); openDownloader(el.dataset.platform); }
   });
 });
@@ -86,6 +98,12 @@ document.getElementById('memoryStartBtn').addEventListener('click', ()=>{ showGa
 document.getElementById('fruitStartBtn').addEventListener('click', ()=>{ showGameContent('fruit'); startFruit(); });
 document.getElementById('mathStartBtn').addEventListener('click', ()=>{ showGameContent('math'); startMath(); });
 document.getElementById('dinoStartBtn').addEventListener('click', ()=>{ showGameContent('dino'); startDino(); });
+document.getElementById('brickStartBtn').addEventListener('click', ()=>{ showGameContent('brick'); startBrick(); });
+document.getElementById('meteorStartBtn').addEventListener('click', ()=>{ showGameContent('meteor'); startMeteor(); });
+document.getElementById('puzzleStartBtn').addEventListener('click', ()=>{ showGameContent('puzzle'); startPuzzle(); });
+document.getElementById('balloonStartBtn').addEventListener('click', ()=>{ showGameContent('balloon'); startBalloon(); });
+document.getElementById('wordStartBtn').addEventListener('click', ()=>{ showGameContent('word'); startWord(); });
+document.getElementById('pianoStartBtn').addEventListener('click', ()=>{ showGameContent('piano'); startPiano(); });
 
 document.querySelectorAll('[data-close]').forEach(el=>{
   el.addEventListener('click', ()=>{
@@ -101,6 +119,12 @@ document.querySelectorAll('[data-close]').forEach(el=>{
     overlayFruit.classList.add('hidden');
     overlayMath.classList.add('hidden');
     overlayDino.classList.add('hidden');
+    overlayBrick.classList.add('hidden');
+    overlayMeteor.classList.add('hidden');
+    overlayPuzzle.classList.add('hidden');
+    overlayBalloon.classList.add('hidden');
+    overlayWord.classList.add('hidden');
+    overlayPiano.classList.add('hidden');
     overlayDownloader.classList.add('hidden');
     stopSnake();
     stopGravity();
@@ -113,6 +137,12 @@ document.querySelectorAll('[data-close]').forEach(el=>{
     stopFruit();
     stopMath();
     stopDino();
+    stopBrick();
+    stopMeteor();
+    stopPuzzle();
+    stopBalloon();
+    stopWord();
+    stopPiano();
     closeDownloader();
     window.removeEventListener('keydown', key2048Handler);
     showStartScreen('snake');
@@ -127,5 +157,11 @@ document.querySelectorAll('[data-close]').forEach(el=>{
     showStartScreen('fruit');
     showStartScreen('math');
     showStartScreen('dino');
+    showStartScreen('brick');
+    showStartScreen('meteor');
+    showStartScreen('puzzle');
+    showStartScreen('balloon');
+    showStartScreen('word');
+    showStartScreen('piano');
   });
 });
