@@ -26,7 +26,13 @@ const tools = {
     { icon: '<i data-lucide="layout-grid"></i>', name: 'Cocok Kartu', sub: 'Ingat posisi, cocokkan pasangan', badge: 'BARU', open: 'memory' },
     { icon: '<i data-lucide="cherry"></i>', name: 'Iris Buah', sub: 'Geser buat iris, hindari bom', badge: 'BARU', open: 'fruit' },
     { icon: '<i data-lucide="calculator"></i>', name: 'Hitung Cepat', sub: 'Jawab soal matematika secepatnya', badge: 'BARU', open: 'math' },
-    { icon: '<i data-lucide="footprints"></i>', name: 'Lari Dino', sub: 'Lompatin kaktus, jangan nabrak', badge: 'BARU', open: 'dino' }
+    { icon: '<i data-lucide="footprints"></i>', name: 'Lari Dino', sub: 'Lompatin kaktus, jangan nabrak', badge: 'BARU', open: 'dino' },
+    { icon: '🧱', name: 'Pecah Bata', sub: 'Pantulkan bola, hancurkan semua bata', badge: 'BARU', open: 'brick' },
+    { icon: '🚀', name: 'Hindari Meteor', sub: 'Geser kapal, hindari meteor jatuh', badge: 'BARU', open: 'meteor' },
+    { icon: '🧩', name: 'Puzzle Geser', sub: 'Urutkan angka 1-8 secepat mungkin', badge: 'BARU', open: 'puzzle' },
+    { icon: '🎈', name: 'Balon Meletus', sub: 'Tap balon, jangan kena bom', badge: 'BARU', open: 'balloon' },
+    { icon: '🔤', name: 'Susun Kata', sub: 'Susun huruf acak jadi kata benar', badge: 'BARU', open: 'word' },
+    { icon: '🎹', name: 'Tap Ubin', sub: 'Tap ubin hitam sebelum kelewatan', badge: 'BARU', open: 'piano' }
   ],
   downloader: [
     { icon: '<i data-lucide="instagram"></i>', name: 'Instagram', sub: 'Download video & foto', badge: 'HD', open: 'dl-instagram', platform: 'instagram' },
