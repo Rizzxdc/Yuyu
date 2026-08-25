@@ -12,11 +12,12 @@ const dlMeta = {
     icon: '<i data-lucide="music-2"></i>'
   },
   youtube: {
-  title: '▶️ YouTube Downloader',
-  placeholder: 'Tempel link video YouTube...',
-  tip: '💡 Tempel tautan video YouTube di bawah untuk mengunduhnya!',
-  icon: '<i data-lucide="youtube"></i>'
-}
+    title: '▶️ YouTube Downloader',
+    placeholder: 'Tempel link video YouTube...',
+    tip: '💡 Tempel tautan video YouTube di bawah untuk mengunduhnya!',
+    icon: '<i data-lucide="youtube"></i>'
+  }
+};
 
 let currentPlatform = null;
 
