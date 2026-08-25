@@ -1,0 +1,27 @@
+<%- include('partials/head') %>
+<body>
+<div class="phone">
+<%- include('partials/header') %>
+<%- include('partials/banner') %>
+<%- include('partials/info') %>
+<%- include('partials/tabs-grid', { tools: tools }) %>
+</div>
+
+<%- include('partials/overlays') %>
+<%- include('partials/theme-modal') %>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="/js/snake.js"></script>
+<script src="/js/game2048.js"></script>
+<script src="/js/gravity.js"></script>
+<script src="/js/otakkilat.js"></script>
+<script src="/js/reflex.js"></script>
+<script src="/js/stacktower.js"></script>
+<script src="/js/downloader.js"></script>
+<script src="/js/theme-selector.js"></script>
+<script src="/js/main.js?=v2"></script>
+<script>
+  if (window.lucide) { lucide.createIcons(); }
+</script>
+</body>
+</html>
