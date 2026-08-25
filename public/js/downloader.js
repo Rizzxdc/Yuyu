@@ -15,7 +15,7 @@ const dlMeta = {
   title: '▶️ YouTube Downloader',
   placeholder: 'Tempel link video YouTube...',
   tip: '💡 Tempel tautan video YouTube di bawah untuk mengunduhnya!',
-  icon: '<iconify-icon icon="mdi:youtube" width="18" style="color:#FF0000"></iconify-icon>'
+  icon: '<i data-lucide="youtube"></i>'
 }
 
 let currentPlatform = null;
