@@ -299,6 +299,146 @@
   </div>
 </div>
 
+<div class="overlay hidden" id="overlayBrick">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🧱 Pecah Bata</div>
+    <div class="g-score">Skor: <b id="brickScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <div class="g-start-screen" id="brickStart">
+      <div class="g-start-icon">🧱</div>
+      <div class="g-start-title">Pecah Bata</div>
+      <div class="g-start-desc">Geser jari buat gerakin paddle, tap buat luncurkan bola, hancurkan semua bata</div>
+      <div class="g-start-btn" id="brickStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="brickContent">
+      <canvas id="brickCanvas" width="320" height="380"></canvas>
+      <div class="g-hint">Geser buat gerakin paddle, tap buat luncurkan bola — nyawa: <b id="brickLives">3</b></div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="brickRestart">Main Lagi</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayMeteor">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🚀 Hindari Meteor</div>
+    <div class="g-score">Skor: <b id="meteorScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <div class="g-start-screen" id="meteorStart">
+      <div class="g-start-icon">🚀</div>
+      <div class="g-start-title">Hindari Meteor</div>
+      <div class="g-start-desc">Geser buat gerakin kapal, ambil perisai biru, hindari meteor</div>
+      <div class="g-start-btn" id="meteorStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="meteorContent">
+      <canvas id="meteorCanvas" width="320" height="380"></canvas>
+      <div class="g-hint">Geser buat gerakin kapal, ambil perisai biru buat kebal sementara</div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="meteorRestart">Main Lagi</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayPuzzle">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🧩 Puzzle Geser</div>
+    <div class="g-score">Langkah: <b id="puzzleMoves">0</b></div>
+  </div>
+  <div class="g-body">
+    <div class="g-start-screen" id="puzzleStart">
+      <div class="g-start-icon">🧩</div>
+      <div class="g-start-title">Puzzle Geser</div>
+      <div class="g-start-desc">Geser angka ke kotak kosong sampai urut 1-8</div>
+      <div class="g-start-btn" id="puzzleStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="puzzleContent">
+      <div class="puzzle-grid" id="puzzleGrid"></div>
+      <div class="g-hint">Urutkan angka 1-8 — langkah: <b id="puzzleMovesHint">0</b> · waktu: <b id="puzzleTime">0</b>s</div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="puzzleRestart">Acak Ulang</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayBalloon">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🎈 Balon Meletus</div>
+    <div class="g-score">Skor: <b id="balloonScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <div class="g-start-screen" id="balloonStart">
+      <div class="g-start-icon">🎈</div>
+      <div class="g-start-title">Balon Meletus</div>
+      <div class="g-start-desc">Tap balon warna-warni buat skor combo, jangan tap balon bom hitam</div>
+      <div class="g-start-btn" id="balloonStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="balloonContent">
+      <canvas id="balloonCanvas" width="320" height="380"></canvas>
+      <div class="g-hint">Tap balon buat skor — jangan kena bom — nyawa: <b id="balloonLives">3</b></div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="balloonRestart">Main Lagi</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayWord">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🔤 Susun Kata</div>
+    <div class="g-score">Skor: <b id="wordScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <div class="g-start-screen" id="wordStart">
+      <div class="g-start-icon">🔤</div>
+      <div class="g-start-title">Susun Kata</div>
+      <div class="g-start-desc">Tap huruf berurutan buat susun jadi kata yang benar sebelum waktu habis</div>
+      <div class="g-start-btn" id="wordStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="wordContent">
+      <div class="word-timer">⏱ <b id="wordTime">45</b>s</div>
+      <div class="word-answer" id="wordAnswer"></div>
+      <div class="word-letters" id="wordLetters"></div>
+      <div class="g-hint">
+        <span id="wordHintText">Susun huruf jadi kata yang benar</span>
+        <span class="word-clear" id="wordClear">Hapus</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayPiano">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🎹 Tap Ubin</div>
+    <div class="g-score">Skor: <b id="pianoScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <div class="g-start-screen" id="pianoStart">
+      <div class="g-start-icon">🎹</div>
+      <div class="g-start-title">Tap Ubin</div>
+      <div class="g-start-desc">Tap ubin hitam yang lewat, jangan sampai kelewatan atau salah tap</div>
+      <div class="g-start-btn" id="pianoStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="pianoContent">
+      <canvas id="pianoCanvas" width="320" height="380"></canvas>
+      <div class="g-hint">Tap ubin hitam sebelum lewat garis bawah</div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="pianoRestart">Main Lagi</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="overlay hidden" id="overlayDownloader">
   <div class="g-topbar">
     <div class="g-back" data-close>←</div>
