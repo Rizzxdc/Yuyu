@@ -5,10 +5,18 @@
     <div class="g-score">Skor: <b id="snakeScore">0</b></div>
   </div>
   <div class="g-body">
-    <canvas id="snakeCanvas" width="320" height="320"></canvas>
-    <div class="g-hint">Geser layar untuk ganti arah, atau pakai tombol panah keyboard</div>
-    <div class="g-actions">
-      <div class="g-btn primary" id="snakeRestart">Main Lagi</div>
+    <div class="g-start-screen" id="snakeStart">
+      <div class="g-start-icon">🐍</div>
+      <div class="g-start-title">Snake</div>
+      <div class="g-start-desc">Geser layar untuk ganti arah, atau pakai tombol panah keyboard</div>
+      <div class="g-start-btn" id="snakeStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="snakeContent">
+      <canvas id="snakeCanvas" width="320" height="320"></canvas>
+      <div class="g-hint">Geser layar untuk ganti arah, atau pakai tombol panah keyboard</div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="snakeRestart">Main Lagi</div>
+      </div>
     </div>
   </div>
 </div>
@@ -20,18 +28,26 @@
     <div class="g-score">Skor: <b id="score2048">0</b></div>
   </div>
   <div class="g-body">
-    <div class="g2048-board" id="board2048">
-      <div class="g2048-grid">
-        <div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div>
-        <div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div>
-        <div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div>
-        <div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div>
-      </div>
-      <div class="g2048-tiles" id="tiles2048"></div>
+    <div class="g-start-screen" id="g2048Start">
+      <div class="g-start-icon">🔢</div>
+      <div class="g-start-title">2048</div>
+      <div class="g-start-desc">Geser ke kiri/kanan/atas/bawah untuk menggabungkan angka</div>
+      <div class="g-start-btn" id="g2048StartBtn"><i data-lucide="play"></i> Mulai</div>
     </div>
-    <div class="g-hint">Geser ke kiri/kanan/atas/bawah untuk menggabungkan angka</div>
-    <div class="g-actions">
-      <div class="g-btn primary" id="restart2048">Main Lagi</div>
+    <div class="g-game-content hidden" id="g2048Content">
+      <div class="g2048-board" id="board2048">
+        <div class="g2048-grid">
+          <div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div>
+          <div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div>
+          <div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div>
+          <div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div><div class="g2048-cell"></div>
+        </div>
+        <div class="g2048-tiles" id="tiles2048"></div>
+      </div>
+      <div class="g-hint">Geser ke kiri/kanan/atas/bawah untuk menggabungkan angka</div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="restart2048">Main Lagi</div>
+      </div>
     </div>
   </div>
 </div>
@@ -43,10 +59,18 @@
     <div class="g-score">Skor: <b id="gravityScore">0</b></div>
   </div>
   <div class="g-body">
-    <canvas id="gravityCanvas" width="320" height="320"></canvas>
-    <div class="g-hint">Tap layar (atau spasi) untuk balik gravitasi, hindari duri</div>
-    <div class="g-actions">
-      <div class="g-btn primary" id="gravityRestart">Main Lagi</div>
+    <div class="g-start-screen" id="gravityStart">
+      <div class="g-start-icon">🌀</div>
+      <div class="g-start-title">Gravity Flip</div>
+      <div class="g-start-desc">Tap layar (atau spasi) untuk balik gravitasi, hindari duri</div>
+      <div class="g-start-btn" id="gravityStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="gravityContent">
+      <canvas id="gravityCanvas" width="320" height="320"></canvas>
+      <div class="g-hint">Tap layar (atau spasi) untuk balik gravitasi, hindari duri</div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="gravityRestart">Main Lagi</div>
+      </div>
     </div>
   </div>
 </div>
@@ -58,15 +82,23 @@
     <div class="g-score">Level: <b id="otakScore">0</b></div>
   </div>
   <div class="g-body">
-    <div class="otak-board" id="otakBoard">
-      <div class="otak-tile" data-idx="0" style="background:#ff5d6c"></div>
-      <div class="otak-tile" data-idx="1" style="background:#4f8cff"></div>
-      <div class="otak-tile" data-idx="2" style="background:#ffb648"></div>
-      <div class="otak-tile" data-idx="3" style="background:#34d17a"></div>
+    <div class="g-start-screen" id="otakStart">
+      <div class="g-start-icon">🧠</div>
+      <div class="g-start-title">Otak Kilat</div>
+      <div class="g-start-desc">Perhatiin urutan warna yang nyala, lalu tiru urutannya</div>
+      <div class="g-start-btn" id="otakStartBtn"><i data-lucide="play"></i> Mulai</div>
     </div>
-    <div class="g-hint" id="otakHint">Perhatiin urutan warna yang nyala, lalu tiru urutannya</div>
-    <div class="g-actions">
-      <div class="g-btn primary" id="otakRestart">Main Lagi</div>
+    <div class="g-game-content hidden" id="otakContent">
+      <div class="otak-board" id="otakBoard">
+        <div class="otak-tile" data-idx="0" style="background:#ff5d6c"></div>
+        <div class="otak-tile" data-idx="1" style="background:#4f8cff"></div>
+        <div class="otak-tile" data-idx="2" style="background:#ffb648"></div>
+        <div class="otak-tile" data-idx="3" style="background:#34d17a"></div>
+      </div>
+      <div class="g-hint" id="otakHint">Perhatiin urutan warna yang nyala, lalu tiru urutannya</div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="otakRestart">Main Lagi</div>
+      </div>
     </div>
   </div>
 </div>
@@ -78,10 +110,18 @@
     <div class="g-score">Skor: <b id="reflexScore">0</b></div>
   </div>
   <div class="g-body">
-    <canvas id="reflexCanvas" width="320" height="320"></canvas>
-    <div class="g-hint">Tap lingkaran biru sebelum ring-nya abis, jangan tap yang merah — nyawa: <b id="reflexLives">3</b></div>
-    <div class="g-actions">
-      <div class="g-btn primary" id="reflexRestart">Main Lagi</div>
+    <div class="g-start-screen" id="reflexStart">
+      <div class="g-start-icon">🎯</div>
+      <div class="g-start-title">Ketuk Refleks</div>
+      <div class="g-start-desc">Tap lingkaran biru sebelum ring-nya abis, jangan tap yang merah</div>
+      <div class="g-start-btn" id="reflexStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="reflexContent">
+      <canvas id="reflexCanvas" width="320" height="320"></canvas>
+      <div class="g-hint">Tap lingkaran biru sebelum ring-nya abis, jangan tap yang merah — nyawa: <b id="reflexLives">3</b></div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="reflexRestart">Main Lagi</div>
+      </div>
     </div>
   </div>
 </div>
@@ -93,10 +133,18 @@
     <div class="g-score">Tinggi: <b id="stackScore">0</b></div>
   </div>
   <div class="g-body">
-    <canvas id="stackCanvas" width="320" height="400"></canvas>
-    <div class="g-hint">Tap layar buat jatuhin balok, usahain pas sama balok di bawahnya</div>
-    <div class="g-actions">
-      <div class="g-btn primary" id="stackRestart">Main Lagi</div>
+    <div class="g-start-screen" id="stackStart">
+      <div class="g-start-icon">🏗️</div>
+      <div class="g-start-title">Stack Tower</div>
+      <div class="g-start-desc">Tap layar buat jatuhin balok, usahain pas sama balok di bawahnya</div>
+      <div class="g-start-btn" id="stackStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="stackContent">
+      <canvas id="stackCanvas" width="320" height="400"></canvas>
+      <div class="g-hint">Tap layar buat jatuhin balok, usahain pas sama balok di bawahnya</div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="stackRestart">Main Lagi</div>
+      </div>
     </div>
   </div>
 </div>
