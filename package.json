@@ -1,0 +1,15 @@
+{
+  "name": "vip-tools-ejs",
+  "version": "1.0.0",
+  "description": "Dashboard VIP Tools dengan menu Mini Game (Snake, 2048, Gravity Flip, Otak Kilat), pakai EJS. Siap deploy ke Vercel.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "dotenv": "^17.4.2",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2"
+  }
+}
