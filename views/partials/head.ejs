@@ -338,6 +338,78 @@ body{
   filter: brightness(0.5) saturate(2);
 }
 
+/* TEPUK TIKUS */
+.mole-timer{ font-size:13px; font-weight:800; color:var(--accent); margin-bottom:4px; }
+.mole-grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:10px;
+  width:100%;
+  max-width:280px;
+}
+.mole-hole{
+  aspect-ratio:1/1;
+  border-radius:16px;
+  background: radial-gradient(circle at 50% 60%, rgba(0,0,0,0.35), rgba(0,0,0,0.15));
+  border:1px solid var(--line);
+  display:flex; align-items:flex-end; justify-content:center;
+  overflow:hidden;
+  cursor:pointer;
+}
+.mole{
+  font-size:30px;
+  transform: translateY(100%);
+  transition: transform .12s ease;
+}
+.mole-hole.up .mole{ transform: translateY(6%); }
+
+/* COCOK KARTU */
+.memory-grid{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:8px;
+  width:100%;
+  max-width:280px;
+}
+.memory-card{
+  aspect-ratio:3/4;
+  border-radius:10px;
+  background: var(--accent);
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px;
+  cursor:pointer;
+  transform-style: preserve-3d;
+  transition: transform .18s ease, background .18s ease;
+}
+.memory-card .memory-face{
+  opacity:0;
+  transition: opacity .1s ease;
+}
+.memory-card.flipped, .memory-card.matched{
+  background: var(--card);
+  border:1px solid var(--line);
+}
+.memory-card.flipped .memory-face, .memory-card.matched .memory-face{ opacity:1; }
+.memory-card.matched{ opacity:0.45; }
+
+/* HITUNG CEPAT */
+.math-timer{ font-size:13px; font-weight:800; color:var(--accent); margin-bottom:10px; }
+.math-quiz{ display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; max-width:280px; }
+.math-question{ font-size:32px; font-weight:800; letter-spacing:1px; }
+.math-options{ display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; width:100%; }
+.math-opt{
+  padding:16px 8px;
+  border-radius:14px;
+  background: var(--card);
+  border:1px solid var(--line);
+  font-size:18px; font-weight:800;
+  text-align:center;
+  cursor:pointer;
+}
+.math-opt:active{ transform: scale(0.95); }
+.math-opt.correct{ background: rgba(52,209,122,0.25); border-color:#34d17a; }
+.math-opt.wrong{ background: rgba(255,93,108,0.25); border-color:#ff5d6c; }
+
 .g-hint{ font-size:12px; color:var(--muted); text-align:center; }
 .g-actions{ display:flex; gap:10px; }
 .g-btn{
