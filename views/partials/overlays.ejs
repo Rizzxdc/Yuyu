@@ -149,6 +149,156 @@
   </div>
 </div>
 
+<div class="overlay hidden" id="overlayFlappy">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🐤 Flappy Blok</div>
+    <div class="g-score">Skor: <b id="flappyScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <div class="g-start-screen" id="flappyStart">
+      <div class="g-start-icon">🐤</div>
+      <div class="g-start-title">Flappy Blok</div>
+      <div class="g-start-desc">Tap layar buat terbang, hindari nabrak pipa</div>
+      <div class="g-start-btn" id="flappyStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="flappyContent">
+      <canvas id="flappyCanvas" width="320" height="320"></canvas>
+      <div class="g-hint">Tap layar buat terbang, hindari nabrak pipa</div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="flappyRestart">Main Lagi</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayMole">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🔨 Tepuk Tikus</div>
+    <div class="g-score">Skor: <b id="moleScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <div class="g-start-screen" id="moleStart">
+      <div class="g-start-icon">🐹</div>
+      <div class="g-start-title">Tepuk Tikus</div>
+      <div class="g-start-desc">Tap tikus yang muncul secepat mungkin sebelum 30 detik habis</div>
+      <div class="g-start-btn" id="moleStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="moleContent">
+      <div class="mole-timer">⏱ <b id="moleTime">30</b>s</div>
+      <div class="mole-grid" id="moleGrid">
+        <div class="mole-hole" data-idx="0"><div class="mole">🐹</div></div>
+        <div class="mole-hole" data-idx="1"><div class="mole">🐹</div></div>
+        <div class="mole-hole" data-idx="2"><div class="mole">🐹</div></div>
+        <div class="mole-hole" data-idx="3"><div class="mole">🐹</div></div>
+        <div class="mole-hole" data-idx="4"><div class="mole">🐹</div></div>
+        <div class="mole-hole" data-idx="5"><div class="mole">🐹</div></div>
+        <div class="mole-hole" data-idx="6"><div class="mole">🐹</div></div>
+        <div class="mole-hole" data-idx="7"><div class="mole">🐹</div></div>
+        <div class="mole-hole" data-idx="8"><div class="mole">🐹</div></div>
+      </div>
+      <div class="g-hint">Tap tikus yang muncul secepat mungkin!</div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="moleRestart">Main Lagi</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayMemory">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🃏 Cocok Kartu</div>
+    <div class="g-score">Langkah: <b id="memoryMoves">0</b></div>
+  </div>
+  <div class="g-body">
+    <div class="g-start-screen" id="memoryStart">
+      <div class="g-start-icon">🃏</div>
+      <div class="g-start-title">Cocok Kartu</div>
+      <div class="g-start-desc">Buka 2 kartu, ingat posisinya, dan cocokkan semua pasangan</div>
+      <div class="g-start-btn" id="memoryStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="memoryContent">
+      <div class="memory-grid" id="memoryGrid"></div>
+      <div class="g-hint">Cocokkan semua pasangan kartu — langkah: <b id="memoryMovesHint">0</b></div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="memoryRestart">Main Lagi</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayFruit">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🍉 Iris Buah</div>
+    <div class="g-score">Skor: <b id="fruitScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <div class="g-start-screen" id="fruitStart">
+      <div class="g-start-icon">🍉</div>
+      <div class="g-start-title">Iris Buah</div>
+      <div class="g-start-desc">Geser jari buat iris buah, jangan iris bomnya, jangan sampai jatuh</div>
+      <div class="g-start-btn" id="fruitStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="fruitContent">
+      <canvas id="fruitCanvas" width="320" height="320"></canvas>
+      <div class="g-hint">Geser buat iris buah — nyawa: <b id="fruitLives">3</b></div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="fruitRestart">Main Lagi</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayMath">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🧮 Hitung Cepat</div>
+    <div class="g-score">Skor: <b id="mathScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <div class="g-start-screen" id="mathStart">
+      <div class="g-start-icon">🧮</div>
+      <div class="g-start-title">Hitung Cepat</div>
+      <div class="g-start-desc">Jawab soal matematika sebanyak-banyaknya sebelum waktu habis</div>
+      <div class="g-start-btn" id="mathStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="mathContent">
+      <div class="math-timer">⏱ <b id="mathTime">30</b>s</div>
+      <div class="math-quiz">
+        <div class="math-question" id="mathQuestion">0 + 0</div>
+        <div class="math-options" id="mathOptions"></div>
+      </div>
+      <div class="g-hint">Pilih jawaban yang benar secepat mungkin</div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayDino">
+  <div class="g-topbar">
+    <div class="g-back" data-close>←</div>
+    <div class="g-title">🦖 Lari Dino</div>
+    <div class="g-score">Skor: <b id="dinoScore">0</b></div>
+  </div>
+  <div class="g-body">
+    <div class="g-start-screen" id="dinoStart">
+      <div class="g-start-icon">🦖</div>
+      <div class="g-start-title">Lari Dino</div>
+      <div class="g-start-desc">Tap layar buat lompat, hindari kaktus yang datang</div>
+      <div class="g-start-btn" id="dinoStartBtn"><i data-lucide="play"></i> Mulai</div>
+    </div>
+    <div class="g-game-content hidden" id="dinoContent">
+      <canvas id="dinoCanvas" width="320" height="320"></canvas>
+      <div class="g-hint">Tap layar buat lompat, hindari kaktusnya</div>
+      <div class="g-actions">
+        <div class="g-btn primary" id="dinoRestart">Main Lagi</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="overlay hidden" id="overlayDownloader">
   <div class="g-topbar">
     <div class="g-back" data-close>←</div>
