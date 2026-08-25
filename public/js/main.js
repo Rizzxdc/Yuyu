@@ -40,18 +40,35 @@ const overlayReflex = document.getElementById('overlayReflex');
 const overlayStack = document.getElementById('overlayStack');
 const overlayDownloader = document.getElementById('overlayDownloader');
 
+function showStartScreen(prefix){
+  document.getElementById(prefix + 'Start').classList.remove('hidden');
+  document.getElementById(prefix + 'Content').classList.add('hidden');
+}
+function showGameContent(prefix){
+  document.getElementById(prefix + 'Start').classList.add('hidden');
+  document.getElementById(prefix + 'Content').classList.remove('hidden');
+}
+
 document.querySelectorAll('[data-open]').forEach(el=>{
   el.addEventListener('click', ()=>{
     const target = el.dataset.open;
-    if (target === 'snake'){ overlaySnake.classList.remove('hidden'); startSnake(); }
-    if (target === 'g2048'){ overlay2048.classList.remove('hidden'); startGame2048(); }
-    if (target === 'gravity'){ overlayGravity.classList.remove('hidden'); startGravity(); }
-    if (target === 'otak'){ overlayOtak.classList.remove('hidden'); startOtak(); }
-    if (target === 'reflex'){ overlayReflex.classList.remove('hidden'); startReflex(); }
-    if (target === 'stack'){ overlayStack.classList.remove('hidden'); startStack(); }
+    if (target === 'snake'){ overlaySnake.classList.remove('hidden'); showStartScreen('snake'); }
+    if (target === 'g2048'){ overlay2048.classList.remove('hidden'); showStartScreen('g2048'); }
+    if (target === 'gravity'){ overlayGravity.classList.remove('hidden'); showStartScreen('gravity'); }
+    if (target === 'otak'){ overlayOtak.classList.remove('hidden'); showStartScreen('otak'); }
+    if (target === 'reflex'){ overlayReflex.classList.remove('hidden'); showStartScreen('reflex'); }
+    if (target === 'stack'){ overlayStack.classList.remove('hidden'); showStartScreen('stack'); }
     if (target && target.startsWith('dl-')){ overlayDownloader.classList.remove('hidden'); openDownloader(el.dataset.platform); }
   });
 });
+
+document.getElementById('snakeStartBtn').addEventListener('click', ()=>{ showGameContent('snake'); startSnake(); });
+document.getElementById('g2048StartBtn').addEventListener('click', ()=>{ showGameContent('g2048'); startGame2048(); });
+document.getElementById('gravityStartBtn').addEventListener('click', ()=>{ showGameContent('gravity'); startGravity(); });
+document.getElementById('otakStartBtn').addEventListener('click', ()=>{ showGameContent('otak'); startOtak(); });
+document.getElementById('reflexStartBtn').addEventListener('click', ()=>{ showGameContent('reflex'); startReflex(); });
+document.getElementById('stackStartBtn').addEventListener('click', ()=>{ showGameContent('stack'); startStack(); });
+
 document.querySelectorAll('[data-close]').forEach(el=>{
   el.addEventListener('click', ()=>{
     overlaySnake.classList.add('hidden');
@@ -68,5 +85,11 @@ document.querySelectorAll('[data-close]').forEach(el=>{
     stopStack();
     closeDownloader();
     window.removeEventListener('keydown', key2048Handler);
+    showStartScreen('snake');
+    showStartScreen('g2048');
+    showStartScreen('gravity');
+    showStartScreen('otak');
+    showStartScreen('reflex');
+    showStartScreen('stack');
   });
 });
