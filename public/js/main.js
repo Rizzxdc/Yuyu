@@ -38,6 +38,12 @@ const overlayGravity = document.getElementById('overlayGravity');
 const overlayOtak = document.getElementById('overlayOtak');
 const overlayReflex = document.getElementById('overlayReflex');
 const overlayStack = document.getElementById('overlayStack');
+const overlayFlappy = document.getElementById('overlayFlappy');
+const overlayMole = document.getElementById('overlayMole');
+const overlayMemory = document.getElementById('overlayMemory');
+const overlayFruit = document.getElementById('overlayFruit');
+const overlayMath = document.getElementById('overlayMath');
+const overlayDino = document.getElementById('overlayDino');
 const overlayDownloader = document.getElementById('overlayDownloader');
 
 function showStartScreen(prefix){
@@ -58,6 +64,12 @@ document.querySelectorAll('[data-open]').forEach(el=>{
     if (target === 'otak'){ overlayOtak.classList.remove('hidden'); showStartScreen('otak'); }
     if (target === 'reflex'){ overlayReflex.classList.remove('hidden'); showStartScreen('reflex'); }
     if (target === 'stack'){ overlayStack.classList.remove('hidden'); showStartScreen('stack'); }
+    if (target === 'flappy'){ overlayFlappy.classList.remove('hidden'); showStartScreen('flappy'); }
+    if (target === 'mole'){ overlayMole.classList.remove('hidden'); showStartScreen('mole'); }
+    if (target === 'memory'){ overlayMemory.classList.remove('hidden'); showStartScreen('memory'); }
+    if (target === 'fruit'){ overlayFruit.classList.remove('hidden'); showStartScreen('fruit'); }
+    if (target === 'math'){ overlayMath.classList.remove('hidden'); showStartScreen('math'); }
+    if (target === 'dino'){ overlayDino.classList.remove('hidden'); showStartScreen('dino'); }
     if (target && target.startsWith('dl-')){ overlayDownloader.classList.remove('hidden'); openDownloader(el.dataset.platform); }
   });
 });
@@ -68,6 +80,12 @@ document.getElementById('gravityStartBtn').addEventListener('click', ()=>{ showG
 document.getElementById('otakStartBtn').addEventListener('click', ()=>{ showGameContent('otak'); startOtak(); });
 document.getElementById('reflexStartBtn').addEventListener('click', ()=>{ showGameContent('reflex'); startReflex(); });
 document.getElementById('stackStartBtn').addEventListener('click', ()=>{ showGameContent('stack'); startStack(); });
+document.getElementById('flappyStartBtn').addEventListener('click', ()=>{ showGameContent('flappy'); startFlappy(); });
+document.getElementById('moleStartBtn').addEventListener('click', ()=>{ showGameContent('mole'); startMole(); });
+document.getElementById('memoryStartBtn').addEventListener('click', ()=>{ showGameContent('memory'); startMemory(); });
+document.getElementById('fruitStartBtn').addEventListener('click', ()=>{ showGameContent('fruit'); startFruit(); });
+document.getElementById('mathStartBtn').addEventListener('click', ()=>{ showGameContent('math'); startMath(); });
+document.getElementById('dinoStartBtn').addEventListener('click', ()=>{ showGameContent('dino'); startDino(); });
 
 document.querySelectorAll('[data-close]').forEach(el=>{
   el.addEventListener('click', ()=>{
@@ -77,12 +95,24 @@ document.querySelectorAll('[data-close]').forEach(el=>{
     overlayOtak.classList.add('hidden');
     overlayReflex.classList.add('hidden');
     overlayStack.classList.add('hidden');
+    overlayFlappy.classList.add('hidden');
+    overlayMole.classList.add('hidden');
+    overlayMemory.classList.add('hidden');
+    overlayFruit.classList.add('hidden');
+    overlayMath.classList.add('hidden');
+    overlayDino.classList.add('hidden');
     overlayDownloader.classList.add('hidden');
     stopSnake();
     stopGravity();
     stopOtak();
     stopReflex();
     stopStack();
+    stopFlappy();
+    stopMole();
+    stopMemory();
+    stopFruit();
+    stopMath();
+    stopDino();
     closeDownloader();
     window.removeEventListener('keydown', key2048Handler);
     showStartScreen('snake');
@@ -91,5 +121,11 @@ document.querySelectorAll('[data-close]').forEach(el=>{
     showStartScreen('otak');
     showStartScreen('reflex');
     showStartScreen('stack');
+    showStartScreen('flappy');
+    showStartScreen('mole');
+    showStartScreen('memory');
+    showStartScreen('fruit');
+    showStartScreen('math');
+    showStartScreen('dino');
   });
 });
