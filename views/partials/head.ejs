@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -701,6 +701,141 @@ body{
   color:#fff; font-weight:800; font-size:20px;
   text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
+
+/* AUTH PAGES (LOGIN & REGISTER) */
+.auth-wrap{
+  min-height:100vh;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 0 20px;
+  box-sizing:border-box;
+}
+.auth-card{
+  width:100%;
+  background: var(--card);
+  border:1px solid var(--line);
+  border-radius: var(--radius);
+  padding:26px 22px 22px;
+}
+.auth-title{ font-size:26px; font-weight:800; margin-bottom:6px; }
+.auth-sub{ font-size:13.5px; color:var(--muted); margin-bottom:22px; }
+.auth-form{ display:flex; flex-direction:column; gap:14px; }
+.input-row{
+  display:flex; align-items:center; gap:10px;
+  background: var(--bg-soft);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px 16px;
+}
+.input-row i, .input-row svg{
+  width:18px; height:18px; flex-shrink:0;
+  color: var(--accent); stroke:currentColor;
+}
+.input-row input{
+  flex:1;
+  background:transparent;
+  border:none;
+  outline:none;
+  color: var(--text);
+  font-size:14.5px;
+  font-family: inherit;
+  min-width:0;
+}
+.input-row input::placeholder{ color: var(--muted); }
+.input-row .toggle-pass{
+  cursor:pointer;
+  color: var(--muted);
+}
+.auth-forgot{
+  text-align:right;
+  font-size:13px;
+  font-weight:700;
+  color: var(--accent);
+  cursor:pointer;
+  margin-top:-4px;
+}
+.auth-submit{
+  width:100%;
+  padding:15px;
+  border-radius:14px;
+  background: var(--accent);
+  border:1px solid var(--accent);
+  color:#fff;
+  font-weight:800;
+  font-size:15px;
+  cursor:pointer;
+  margin-top:4px;
+}
+.auth-submit:active{ transform: scale(0.98); }
+.auth-submit:disabled{ opacity:0.6; }
+.auth-footer-note{
+  text-align:center;
+  font-size:13px;
+  color: var(--muted);
+  background: var(--bg-soft);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+  margin-top:4px;
+}
+.auth-footer-note a{
+  color: var(--accent);
+  font-weight:800;
+  text-decoration:none;
+}
+.auth-error{
+  background: rgba(255,93,108,0.12);
+  border:1px solid rgba(255,93,108,0.4);
+  color:#ff8a93;
+  font-size:13px;
+  border-radius:12px;
+  padding:11px 14px;
+  margin-bottom:16px;
+}
+.auth-success{
+  background: rgba(52,209,122,0.12);
+  border:1px solid rgba(52,209,122,0.4);
+  color:#5eeaa0;
+  font-size:13px;
+  border-radius:12px;
+  padding:11px 14px;
+  margin-bottom:16px;
+}
+
+/* AUTH GUARD (dashboard) */
+.phone.auth-hidden{ display:none; }
+.auth-loader{
+  min-height:100vh;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color: var(--muted);
+  font-size:13px;
+}
+
+/* USER CHIP DI HEADER */
+.user-chip{
+  display:flex; align-items:center; gap:8px;
+  background: var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:6px 10px 6px 6px;
+  margin-left:8px;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.user-chip-avatar{
+  width:26px; height:26px; border-radius:8px;
+  background: var(--accent);
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-weight:800; font-size:11px;
+  text-transform:uppercase;
+}
+.user-chip span{ font-size:12px; font-weight:700; max-width:70px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.user-chip i, .user-chip svg{ width:14px; height:14px; color: var(--muted); }
 </style>
 <script>
 (function(){
