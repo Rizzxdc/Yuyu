@@ -16,13 +16,12 @@
 // ============================================================
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCjn6Sk7fmn-zBiWryPBDWrb-xygOzoVDU",
-  authDomain: "rizzxdatabase.firebaseapp.com",
-  projectId: "rizzxdatabase",
-  storageBucket: "rizzxdatabase.firebasestorage.app",
-  messagingSenderId: "1045655561056",
-  appId: "1:1045655561056:web:f970d373638b4877473405",
-  measurementId: "G-WG1YL5DWHL"
+  apiKey: "AIzaSyCH8g4fvD3hczZK784fzk9c6EeLGx4WMeM",
+  authDomain: "rizzaja-36000.firebaseapp.com",
+  projectId: "rizzaja-36000",
+  storageBucket: "rizzaja-36000.firebasestorage.app",
+  messagingSenderId: "107877025139",
+  appId: "1:107877025139:web:73a1c85ead90e472823106"
 };
 
 firebase.initializeApp(firebaseConfig);
