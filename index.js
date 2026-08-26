@@ -45,6 +45,14 @@ app.get('/', (req, res) => {
   res.render('index', { tools });
 });
 
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
+app.get('/register', (req, res) => {
+  res.render('register');
+});
+
 app.post('/api/download', express.json(), async (req, res) => {
   // Menangkap type dan quality yang dikirim khusus dari YouTube
   const { platform, url, type, quality } = req.body || {};
