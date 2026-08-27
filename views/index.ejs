@@ -1,8 +1,7 @@
 <%- include('partials/head') %>
 <body>
-<div id="authLoader" class="auth-loader">Memeriksa sesi login...</div>
-<div class="phone auth-hidden">
-<%- include('partials/header') %>
+<div class="phone">
+<%- include('partials/header', { user: user }) %>
 <%- include('partials/banner') %>
 <%- include('partials/info') %>
 <%- include('partials/tabs-grid', { tools: tools }) %>
@@ -11,11 +10,6 @@
 <%- include('partials/overlays') %>
 <%- include('partials/theme-modal') %>
 
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-<script src="/js/firebase-config.js"></script>
-<script src="/js/auth.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="/js/snake.js"></script>
 <script src="/js/game2048.js"></script>
@@ -39,8 +33,12 @@
 <script src="/js/theme-selector.js"></script>
 <script src="/js/main.js?=v2"></script>
 <script>
+  function doLogout(){
+    fetch('/api/logout', { method: 'POST' })
+      .then(() => { window.location.href = '/login'; })
+      .catch(() => { window.location.href = '/login'; });
+  }
   if (window.lucide) { lucide.createIcons(); }
-  window.initAuthGuard();
 </script>
 </body>
 </html>
