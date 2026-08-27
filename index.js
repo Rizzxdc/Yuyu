@@ -2,16 +2,54 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const axios = require('axios');
+const cookieParser = require('cookie-parser');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { getUsers, withUsers } = require('./githubDB');
 const { tiktokDl } = require('./scrapers/tiktok');
 const { igDl } = require('./scrapers/instagram');
 const { ytDl } = require('./scrapers/youtube');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'ganti-secret-ini-di-env';
+const TOKEN_COOKIE_NAME = 'token';
+const TOKEN_EXPIRES_IN = '5d';
+const TOKEN_MAX_AGE_MS = 5 * 24 * 60 * 60 * 1000;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser());
+
+// Middleware: WAJIB login buat lanjut
+function requireAuth(req, res, next) {
+  const token = req.cookies[TOKEN_COOKIE_NAME];
+  if (!token) return res.redirect('/login');
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = { uid: decoded.uid, username: decoded.username };
+    next();
+  } catch (e) {
+    res.clearCookie(TOKEN_COOKIE_NAME);
+    return res.redirect('/login');
+  }
+}
+
+// Middleware: kalau sudah login, jangan tampilkan lagi halaman login/register
+function redirectIfLoggedIn(req, res, next) {
+  const token = req.cookies[TOKEN_COOKIE_NAME];
+  if (!token) return next();
+
+  try {
+    jwt.verify(token, JWT_SECRET);
+    return res.redirect('/');
+  } catch (e) {
+    res.clearCookie(TOKEN_COOKIE_NAME);
+    next();
+  }
+}
 
 const tools = {
   game: [
@@ -41,16 +79,121 @@ const tools = {
   ]
 };
 
-app.get('/', (req, res) => {
-  res.render('index', { tools });
+app.get('/', requireAuth, (req, res) => {
+  res.render('index', { tools, user: req.user });
 });
 
-app.get('/login', (req, res) => {
+app.get('/login', redirectIfLoggedIn, (req, res) => {
   res.render('login');
 });
 
-app.get('/register', (req, res) => {
+app.get('/register', redirectIfLoggedIn, (req, res) => {
   res.render('register');
+});
+
+function signToken(user) {
+  return jwt.sign({ uid: user.id, username: user.username }, JWT_SECRET, {
+    expiresIn: TOKEN_EXPIRES_IN
+  });
+}
+
+function setAuthCookie(res, token) {
+  res.cookie(TOKEN_COOKIE_NAME, token, {
+    maxAge: TOKEN_MAX_AGE_MS,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  });
+}
+
+app.post('/api/register', express.json(), async (req, res) => {
+  const { username, email, password } = req.body || {};
+
+  if (!username || !email || !password) {
+    return res.status(400).json({ ok: false, message: 'Semua kolom wajib diisi.' });
+  }
+  if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+    return res.status(400).json({ ok: false, message: 'Username 3-20 karakter, huruf/angka/underscore saja.' });
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ ok: false, message: 'Format email tidak valid.' });
+  }
+  if (password.length < 6) {
+    return res.status(400).json({ ok: false, message: 'Password minimal 6 karakter.' });
+  }
+
+  const usernameLower = username.toLowerCase();
+  const emailLower = email.toLowerCase();
+
+  try {
+    const passwordHash = await bcrypt.hash(password, 10);
+    let newUser = null;
+    let duplicateMessage = null;
+
+    await withUsers((users) => {
+      if (users.some(u => u.username === usernameLower)) {
+        duplicateMessage = 'Username sudah dipakai, coba yang lain.';
+        return users;
+      }
+      if (users.some(u => u.email === emailLower)) {
+        duplicateMessage = 'Email sudah terdaftar.';
+        return users;
+      }
+      newUser = {
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+        username: usernameLower,
+        email: emailLower,
+        passwordHash,
+        createdAt: new Date().toISOString()
+      };
+      return [...users, newUser];
+    });
+
+    if (duplicateMessage) {
+      return res.status(409).json({ ok: false, message: duplicateMessage });
+    }
+
+    const token = signToken(newUser);
+    setAuthCookie(res, token);
+    return res.json({ ok: true });
+  } catch (e) {
+    console.error('Register error:', e.message);
+    return res.status(500).json({ ok: false, message: 'Gagal mendaftar, coba lagi. (' + e.message + ')' });
+  }
+});
+
+app.post('/api/login', express.json(), async (req, res) => {
+  const { identifier, password } = req.body || {};
+
+  if (!identifier || !password) {
+    return res.status(400).json({ ok: false, message: 'Username/email dan password wajib diisi.' });
+  }
+
+  try {
+    const idLower = identifier.trim().toLowerCase();
+    const { users } = await getUsers();
+    const user = users.find(u => u.username === idLower || u.email === idLower);
+    if (!user) {
+      return res.status(401).json({ ok: false, message: 'Username/email belum terdaftar.' });
+    }
+
+    const match = await bcrypt.compare(password, user.passwordHash);
+    if (!match) {
+      return res.status(401).json({ ok: false, message: 'Password salah.' });
+    }
+
+    const token = signToken(user);
+    setAuthCookie(res, token);
+    return res.json({ ok: true });
+  } catch (e) {
+    console.error('Login error:', e.message);
+    return res.status(500).json({ ok: false, message: 'Gagal login, coba lagi. (' + e.message + ')' });
+  }
+});
+
+app.post('/api/logout', (req, res) => {
+  res.clearCookie(TOKEN_COOKIE_NAME);
+  return res.json({ ok: true });
 });
 
 app.post('/api/download', express.json(), async (req, res) => {
