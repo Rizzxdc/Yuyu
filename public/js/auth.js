@@ -1,23 +1,4 @@
 (function () {
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  const ERROR_MESSAGES = {
-    'auth/invalid-email': 'Format email tidak valid.',
-    'auth/user-disabled': 'Akun ini sudah dinonaktifkan.',
-    'auth/user-not-found': 'Username/email belum terdaftar.',
-    'auth/wrong-password': 'Password salah.',
-    'auth/invalid-credential': 'Username/email atau password salah.',
-    'auth/email-already-in-use': 'Email ini sudah terdaftar, coba masuk.',
-    'auth/weak-password': 'Password minimal 6 karakter.',
-    'auth/network-request-failed': 'Koneksi bermasalah, coba lagi.',
-    'auth/too-many-requests': 'Terlalu banyak percobaan, coba lagi nanti.'
-  };
-
-  function friendlyError(err) {
-    return ERROR_MESSAGES[err.code] || 'Terjadi kesalahan: ' + err.message;
-  }
-
   function showError(msg) {
     const el = document.getElementById('authError');
     const ok = document.getElementById('authSuccess');
@@ -65,57 +46,42 @@
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       clearMessages();
-      const idValue = document.getElementById('loginId').value.trim();
+      const identifier = document.getElementById('loginId').value.trim();
       const password = document.getElementById('loginPassword').value;
       const btn = document.getElementById('loginSubmitBtn');
-      setLoading(btn, true, 'Masuk');
 
+      if (!identifier || !password) {
+        showError('Username/email dan password wajib diisi.');
+        return;
+      }
+
+      setLoading(btn, true, 'Masuk');
       try {
-        let email = idValue;
-        if (!idValue.includes('@')) {
-          const unameDoc = await db.collection('usernames').doc(idValue.toLowerCase()).get();
-          if (!unameDoc.exists) {
-            showError('Username/email belum terdaftar.');
-            setLoading(btn, false, 'Masuk');
-            return;
-          }
-          email = unameDoc.data().email;
+        const resp = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier, password })
+        });
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) {
+          showError(data.message || 'Gagal login.');
+          setLoading(btn, false, 'Masuk');
+          return;
         }
-        await auth.signInWithEmailAndPassword(email, password);
         window.location.href = '/';
       } catch (err) {
-        showError(friendlyError(err));
+        showError('Koneksi bermasalah, coba lagi.');
         setLoading(btn, false, 'Masuk');
       }
     });
 
     const forgotLink = document.getElementById('forgotLink');
     if (forgotLink) {
-      forgotLink.addEventListener('click', async () => {
+      forgotLink.addEventListener('click', () => {
         clearMessages();
-        const idValue = (document.getElementById('loginId').value || '').trim();
-        let email = idValue;
-        try {
-          if (idValue && !idValue.includes('@')) {
-            const unameDoc = await db.collection('usernames').doc(idValue.toLowerCase()).get();
-            if (unameDoc.exists) email = unameDoc.data().email;
-          }
-          if (!email || !email.includes('@')) {
-            showError('Isi kolom Username atau Email dulu, lalu tap "Lupa Password?" lagi.');
-            return;
-          }
-          await auth.sendPasswordResetEmail(email);
-          showSuccess('Link reset password sudah dikirim ke ' + email);
-        } catch (err) {
-          showError(friendlyError(err));
-        }
+        showError('Fitur reset password belum tersedia. Hubungi admin kalau lupa password.');
       });
     }
-
-    // Kalau sudah login, langsung lempar ke dashboard
-    auth.onAuthStateChanged(user => {
-      if (user) window.location.href = '/';
-    });
   }
 
   /* ---------------- REGISTER ---------------- */
@@ -130,8 +96,16 @@
       const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
       const btn = document.getElementById('registerSubmitBtn');
 
+      if (!username || !email || !password || !passwordConfirm) {
+        showError('Semua kolom wajib diisi.');
+        return;
+      }
       if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
         showError('Username 3-20 karakter, huruf/angka/underscore saja.');
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError('Format email tidak valid.');
         return;
       }
       if (password.length < 6) {
@@ -144,62 +118,23 @@
       }
 
       setLoading(btn, true, 'Daftar Akun');
-
       try {
-        const usernameKey = username.toLowerCase();
-        const existing = await db.collection('usernames').doc(usernameKey).get();
-        if (existing.exists) {
-          showError('Username sudah dipakai, coba yang lain.');
+        const resp = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, password })
+        });
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) {
+          showError(data.message || 'Gagal mendaftar.');
           setLoading(btn, false, 'Daftar Akun');
           return;
         }
-
-        const cred = await auth.createUserWithEmailAndPassword(email, password);
-        await cred.user.updateProfile({ displayName: username });
-
-        await db.collection('usernames').doc(usernameKey).set({
-          uid: cred.user.uid,
-          email
-        });
-        await db.collection('users').doc(cred.user.uid).set({
-          username,
-          email,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
         window.location.href = '/';
       } catch (err) {
-        showError(friendlyError(err));
+        showError('Koneksi bermasalah, coba lagi.');
         setLoading(btn, false, 'Daftar Akun');
       }
     });
-
-    auth.onAuthStateChanged(user => {
-      if (user) window.location.href = '/';
-    });
   }
-
-  /* ---------------- LOGOUT (dipanggil dari header dashboard) ---------------- */
-  window.doLogout = function () {
-    auth.signOut().then(() => { window.location.href = '/login'; });
-  };
-
-  /* ---------------- AUTH GUARD (dipakai di dashboard index.ejs) ---------------- */
-  window.initAuthGuard = function () {
-    auth.onAuthStateChanged(user => {
-      const phone = document.querySelector('.phone');
-      const loader = document.getElementById('authLoader');
-      if (!user) {
-        window.location.href = '/login';
-        return;
-      }
-      const nameEl = document.getElementById('userChipName');
-      const avatarEl = document.getElementById('userChipAvatar');
-      const displayName = user.displayName || user.email.split('@')[0];
-      if (nameEl) nameEl.textContent = displayName;
-      if (avatarEl) avatarEl.textContent = displayName.charAt(0);
-      if (phone) phone.classList.remove('auth-hidden');
-      if (loader) loader.remove();
-    });
-  };
 })();
