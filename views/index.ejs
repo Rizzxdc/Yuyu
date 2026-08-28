@@ -3,7 +3,7 @@
 <div class="phone">
 <%- include('partials/header', { user: user }) %>
 <%- include('partials/banner') %>
-<%- include('partials/info') %>
+<%- include('partials/info', { user: user }) %>
 <%- include('partials/tabs-grid', { tools: tools }) %>
 </div>
 
@@ -31,6 +31,7 @@
 <script src="/js/piano.js"></script>
 <script src="/js/downloader.js"></script>
 <script src="/js/theme-selector.js"></script>
+<script src="/js/highscore.js"></script>
 <script src="/js/main.js?=v2"></script>
 <script>
   function doLogout(){
