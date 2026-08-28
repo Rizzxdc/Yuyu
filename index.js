@@ -22,6 +22,15 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 
+function maskEmail(email) {
+  if (!email || !email.includes('@')) return email || '';
+  const [local, domain] = email.split('@');
+  const visibleLen = Math.min(5, Math.max(1, local.length - 1));
+  const visible = local.slice(0, visibleLen);
+  const stars = '*'.repeat(Math.max(3, local.length - visibleLen));
+  return `${visible}${stars}@${domain}`;
+}
+
 // Middleware: WAJIB login buat lanjut
 function requireAuth(req, res, next) {
   const token = req.cookies[TOKEN_COOKIE_NAME];
@@ -29,7 +38,12 @@ function requireAuth(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = { uid: decoded.uid, username: decoded.username };
+    req.user = {
+      uid: decoded.uid,
+      username: decoded.username,
+      email: decoded.email,
+      maskedEmail: maskEmail(decoded.email)
+    };
     next();
   } catch (e) {
     res.clearCookie(TOKEN_COOKIE_NAME);
@@ -80,7 +94,7 @@ const tools = {
 };
 
 app.get('/', requireAuth, (req, res) => {
-  res.render('index', { tools, user: req.user });
+  res.render('index', { tools, user: req.user, whatsappChannel: process.env.WHATSAPP_CHANNEL_URL || '#' });
 });
 
 app.get('/login', redirectIfLoggedIn, (req, res) => {
@@ -92,7 +106,7 @@ app.get('/register', redirectIfLoggedIn, (req, res) => {
 });
 
 function signToken(user) {
-  return jwt.sign({ uid: user.id, username: user.username }, JWT_SECRET, {
+  return jwt.sign({ uid: user.id, username: user.username, email: user.email }, JWT_SECRET, {
     expiresIn: TOKEN_EXPIRES_IN
   });
 }
@@ -157,8 +171,9 @@ app.post('/api/register', express.json(), async (req, res) => {
     setAuthCookie(res, token);
     return res.json({ ok: true });
   } catch (e) {
-    console.error('Register error:', e.message);
-    return res.status(500).json({ ok: false, message: 'Gagal mendaftar, coba lagi. (' + e.message + ')' });
+    const githubMsg = e.response && e.response.data && e.response.data.message;
+    console.error('Register error:', e.message, githubMsg || '');
+    return res.status(500).json({ ok: false, message: 'Gagal mendaftar: ' + (githubMsg || e.message) });
   }
 });
 
@@ -186,8 +201,52 @@ app.post('/api/login', express.json(), async (req, res) => {
     setAuthCookie(res, token);
     return res.json({ ok: true });
   } catch (e) {
-    console.error('Login error:', e.message);
-    return res.status(500).json({ ok: false, message: 'Gagal login, coba lagi. (' + e.message + ')' });
+    const githubMsg = e.response && e.response.data && e.response.data.message;
+    console.error('Login error:', e.message, githubMsg || '');
+    return res.status(500).json({ ok: false, message: 'Gagal login: ' + (githubMsg || e.message) });
+  }
+});
+
+// Endpoint bantu buat ngecek koneksi GITHUB_TOKEN/GITHUB_REPO tanpa
+// perlu daftar akun dulu. Buka aja di browser: /api/debug-github
+app.get('/api/debug-github', async (req, res) => {
+  const repo = process.env.GITHUB_REPO;
+  const hasToken = !!process.env.GITHUB_TOKEN;
+  const branch = process.env.GITHUB_BRANCH || 'main';
+
+  if (!hasToken || !repo) {
+    return res.json({
+      ok: false,
+      message: 'GITHUB_TOKEN atau GITHUB_REPO belum keisi di Environment Variables.',
+      GITHUB_TOKEN_ada: hasToken,
+      GITHUB_REPO: repo || '(kosong)'
+    });
+  }
+
+  try {
+    const resp = await axios.get(`https://api.github.com/repos/${repo}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github+json'
+      }
+    });
+    return res.json({
+      ok: true,
+      message: 'Token & repo VALID, bisa diakses.',
+      repo_ditemukan: resp.data.full_name,
+      default_branch_asli: resp.data.default_branch,
+      GITHUB_BRANCH_yang_diisi_di_env: branch,
+      branch_cocok: resp.data.default_branch === branch
+    });
+  } catch (e) {
+    const githubMsg = e.response && e.response.data && e.response.data.message;
+    return res.json({
+      ok: false,
+      message: 'Gagal akses repo lewat GitHub API.',
+      status_code: e.response ? e.response.status : null,
+      github_message: githubMsg || e.message,
+      GITHUB_REPO_yang_diisi: repo
+    });
   }
 });
 
