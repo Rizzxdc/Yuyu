@@ -1,10 +1,33 @@
-  <div class="info-card">
-    <div class="info-row">
-      <div class="info-left"><span class="info-icon"><i data-lucide="smartphone"></i></span> Perangkat</div>
-      <div class="info-val" id="deviceVal">Android</div>
+<div class="profile-card">
+    <div class="profile-header">
+      <div class="profile-avatar"><%= (user && user.username) ? user.username.charAt(0).toUpperCase() : '?' %></div>
+      <div>
+        <div class="profile-name"><%= (user && user.username) ? user.username : 'Guest' %></div>
+        <div class="profile-email"><%= (user && user.maskedEmail) ? user.maskedEmail : '' %></div>
+      </div>
     </div>
-    <div class="info-row">
-      <div class="info-left"><span class="info-icon"><i data-lucide="battery-full"></i></span> Baterai</div>
-      <div class="info-val" id="batteryVal">—</div>
+
+    <div class="info-card">
+      <div class="info-row">
+        <div class="info-left"><span class="info-icon"><i data-lucide="smartphone"></i></span> Perangkat</div>
+        <div class="info-val" id="deviceVal">Android</div>
+      </div>
+      <div class="info-row">
+        <div class="info-left"><span class="info-icon"><i data-lucide="battery-full"></i></span> Baterai</div>
+        <div class="info-val" id="batteryVal">—</div>
+      </div>
+      <div class="info-row">
+        <div class="info-left"><span class="info-icon"><i data-lucide="trophy"></i></span> High Score</div>
+        <div class="info-val" id="highScoreVal">0</div>
+      </div>
     </div>
   </div>
+
+  <a class="wa-banner" href="<%= whatsappChannel || '#' %>" target="_blank" rel="noopener">
+    <div class="wa-banner-icon"><i data-lucide="message-circle"></i></div>
+    <div class="wa-banner-text">
+      <div class="wa-banner-title">Join Saluran WhatsApp</div>
+      <div class="wa-banner-sub">Dapatkan informasi terkait update tools terbaru & update lainnya.</div>
+    </div>
+    <i data-lucide="chevron-right"></i>
+  </a>
