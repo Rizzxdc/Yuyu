@@ -22,6 +22,12 @@ const dlMeta = {
     placeholder: '',
     tip: '💡 Pilih gambar dari galeri buat di-upload dan dapetin link-nya!',
     icon: '<i data-lucide="image-up"></i>'
+  },
+  npm: {
+    title: '📦 NPM Package',
+    placeholder: 'Tempel link package npm (npmjs.com/package/...)...',
+    tip: '💡 Tempel link package npm di bawah buat cek info & download-nya!',
+    icon: '<svg viewBox="0 0 24 24" width="18" height="18"><rect width="24" height="24" rx="4" fill="#CB3837"/><text x="12" y="15.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="#fff">NPM</text></svg>'
   }
 };
 
@@ -125,7 +131,7 @@ function openDownloader(platform){
     if (window.lucide) lucide.createIcons();
   } else {
     dlInputWrap.style.display = 'flex';
-    submitBtn.querySelector('span').textContent = 'Cari Video';
+    submitBtn.querySelector('span').textContent = (platform === 'npm') ? 'Cek Package' : 'Cari Video';
   }
 
   if (platform === 'youtube') {
@@ -259,6 +265,50 @@ async function submitDownload(){
     const data = await res.json();
 
     if (data.ok && data.data) {
+      if (currentPlatform === 'npm') {
+        const p = data.data;
+        const depsList = p.dependencies ? Object.keys(p.dependencies) : [];
+        const sizeText = p.file_info?.unpacked_size || '-';
+        const fileCount = p.file_info?.file_count ?? '-';
+        const downloadUrl = p.download;
+        const safeFileName = `${(p.name || 'package').replace(/[^a-z0-9@_\-.]/gi, '_')}-${p.latest_version || 'latest'}`;
+
+        let html = `
+          <div class="dl-card npm-card">
+            <div class="npm-head">
+              <div class="npm-name">${p.name || '-'}</div>
+              <div class="npm-version-badge">v${p.latest_version || '?'}</div>
+            </div>
+            ${p.description ? `<div class="npm-desc">${p.description}</div>` : ''}
+            <div class="npm-meta-row">
+              ${p.license ? `<div class="npm-meta-item"><i data-lucide="scale"></i> ${p.license}</div>` : ''}
+              ${p.author && p.author.name ? `<div class="npm-meta-item"><i data-lucide="user"></i> ${p.author.name}</div>` : ''}
+              ${p.total_versions ? `<div class="npm-meta-item"><i data-lucide="tags"></i> ${p.total_versions} versi</div>` : ''}
+            </div>
+            <div class="npm-stats-grid">
+              <div class="npm-stat"><div class="npm-stat-val">${p.dependencies_count ?? 0}</div><div class="npm-stat-label">Dependencies</div></div>
+              <div class="npm-stat"><div class="npm-stat-val">${p.dev_dependencies_count ?? 0}</div><div class="npm-stat-label">Dev Deps</div></div>
+              <div class="npm-stat"><div class="npm-stat-val">${fileCount}</div><div class="npm-stat-label">File</div></div>
+              <div class="npm-stat"><div class="npm-stat-val">${sizeText}</div><div class="npm-stat-label">Size</div></div>
+            </div>
+            ${depsList.length ? `
+              <div class="npm-deps-label">Dependencies:</div>
+              <div class="npm-deps-list">${depsList.map(d => `<span class="npm-dep-tag">${d}</span>`).join('')}</div>
+            ` : ''}
+            <div class="dl-actions">
+              ${p.homepage ? `<a href="${p.homepage}" target="_blank" rel="noopener" class="dl-action-btn secondary"><i data-lucide="external-link"></i> Homepage</a>` : ''}
+              ${downloadUrl ? `<a href="${downloadUrl}" onclick="forceDirectDl(event, this.href, '${safeFileName}.tgz')" class="dl-action-btn"><i data-lucide="download"></i> Download .tgz</a>` : ''}
+            </div>
+          </div>
+        `;
+
+        resultEl.innerHTML = html;
+        if (window.lucide) lucide.createIcons();
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+        return;
+      }
+
       const items = Array.isArray(data.data) ? data.data : [data.data];
       let html = '<div style="display:flex; flex-direction:column; gap:16px;">';
 
