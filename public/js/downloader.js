@@ -28,10 +28,23 @@ const dlMeta = {
     placeholder: 'Tempel link package npm (npmjs.com/package/...)...',
     tip: '💡 Tempel link package npm di bawah buat cek info & download-nya!',
     icon: '<svg viewBox="0 0 24 24" width="18" height="18"><rect width="24" height="24" rx="4" fill="#CB3837"/><text x="12" y="15.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="#fff">NPM</text></svg>'
+  },
+  stalktiktok: {
+    title: '🔍 Stalk TikTok',
+    placeholder: 'Masukin username TikTok (tanpa @)...',
+    tip: '💡 Masukin username TikTok (atau link profilnya) buat liat infonya!',
+    icon: '<i data-lucide="search"></i>'
   }
 };
 
 let currentPlatform = null;
+
+function formatNum(n) {
+  const num = Number(n) || 0;
+  if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+  return String(num);
+}
 
 // Trik mutlak untuk direct download: Fetch API ke Blob
 window.forceDirectDl = async function(e, url, filename) {
@@ -131,7 +144,13 @@ function openDownloader(platform){
     if (window.lucide) lucide.createIcons();
   } else {
     dlInputWrap.style.display = 'flex';
-    submitBtn.querySelector('span').textContent = (platform === 'npm') ? 'Cek Package' : 'Cari Video';
+    if (platform === 'npm') {
+      submitBtn.querySelector('span').textContent = 'Cek Package';
+    } else if (platform === 'stalktiktok') {
+      submitBtn.querySelector('span').textContent = 'Cek Akun';
+    } else {
+      submitBtn.querySelector('span').textContent = 'Cari Video';
+    }
   }
 
   if (platform === 'youtube') {
@@ -298,6 +317,39 @@ async function submitDownload(){
             <div class="dl-actions">
               ${p.homepage ? `<a href="${p.homepage}" target="_blank" rel="noopener" class="dl-action-btn secondary"><i data-lucide="external-link"></i> Homepage</a>` : ''}
               ${downloadUrl ? `<a href="${downloadUrl}" onclick="forceDirectDl(event, this.href, '${safeFileName}.tgz')" class="dl-action-btn"><i data-lucide="download"></i> Download .tgz</a>` : ''}
+            </div>
+          </div>
+        `;
+
+        resultEl.innerHTML = html;
+        if (window.lucide) lucide.createIcons();
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+        return;
+      }
+
+      if (currentPlatform === 'stalktiktok') {
+        const r = data.data;
+        const verifiedBadge = r.verified ? '<i data-lucide="badge-check" class="stalk-verified"></i>' : '';
+
+        let html = `
+          <div class="dl-card stalk-card">
+            <div class="stalk-head">
+              <img class="stalk-avatar" src="${r.avatar}" alt="avatar" onerror="this.style.display='none'">
+              <div class="stalk-head-text">
+                <div class="stalk-nickname">${r.nickname || '-'} ${verifiedBadge}</div>
+                <div class="stalk-username">@${r.uniqueId || '-'}</div>
+              </div>
+            </div>
+            ${r.signature ? `<div class="stalk-bio">${r.signature}</div>` : ''}
+            <div class="stalk-stats-grid">
+              <div class="npm-stat"><div class="npm-stat-val">${formatNum(r.followers)}</div><div class="npm-stat-label">Followers</div></div>
+              <div class="npm-stat"><div class="npm-stat-val">${formatNum(r.following)}</div><div class="npm-stat-label">Following</div></div>
+              <div class="npm-stat"><div class="npm-stat-val">${formatNum(r.likes)}</div><div class="npm-stat-label">Likes</div></div>
+              <div class="npm-stat"><div class="npm-stat-val">${formatNum(r.videos)}</div><div class="npm-stat-label">Videos</div></div>
+            </div>
+            <div class="dl-actions">
+              <a href="https://www.tiktok.com/@${r.uniqueId}" target="_blank" rel="noopener" class="dl-action-btn secondary"><i data-lucide="external-link"></i> Buka Profil TikTok</a>
             </div>
           </div>
         `;
