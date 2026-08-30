@@ -15,7 +15,13 @@ const dlMeta = {
     title: '▶️ YouTube Downloader',
     placeholder: 'Tempel link video YouTube...',
     tip: '💡 Tempel tautan video YouTube di bawah untuk mengunduhnya!',
-    icon: '<i data-lucide="youtube"></i>'
+    icon: '<svg viewBox="0 0 24 24" width="18" height="18"><rect width="24" height="24" rx="6" fill="#FF0000"/><path d="M9.5 8.3v7.4c0 .5.55.8 1 .55l6.4-3.7c.44-.26.44-.9 0-1.15l-6.4-3.7c-.45-.26-1 .05-1 .55z" fill="#fff"/></svg>'
+  },
+  imgupload: {
+    title: '🖼️ Uploader Gambar',
+    placeholder: '',
+    tip: '💡 Pilih gambar dari galeri buat di-upload dan dapetin link-nya!',
+    icon: '<i data-lucide="image-up"></i>'
   }
 };
 
@@ -71,9 +77,56 @@ function openDownloader(platform){
   input.value = '';
   document.getElementById('dlResult').innerHTML = '';
 
-  // --- LOGIKA BARU UNTUK MENU OPSI YOUTUBE ---
+  // --- Bersihkan elemen dinamis dari sesi sebelumnya ---
   const oldOptions = document.getElementById('ytOptions');
-  if (oldOptions) oldOptions.remove(); // Bersihkan opsi lama jika ada
+  if (oldOptions) oldOptions.remove();
+  const oldImgPicker = document.getElementById('imgUploadPicker');
+  if (oldImgPicker) oldImgPicker.remove();
+
+  const submitBtn = document.getElementById('dlSubmit');
+  const dlInputWrap = input.closest('.dl-input-wrap');
+
+  if (platform === 'imgupload') {
+    // Sembunyikan input URL biasa, ganti dengan file picker
+    dlInputWrap.style.display = 'none';
+    submitBtn.querySelector('span').textContent = 'Upload Gambar';
+
+    const picker = document.createElement('div');
+    picker.id = 'imgUploadPicker';
+    picker.innerHTML = `
+      <input type="file" id="imgUploadFile" accept="image/*" class="hidden">
+      <div class="img-upload-drop" id="imgUploadDrop">
+        <div class="img-upload-preview hidden" id="imgUploadPreviewWrap">
+          <img id="imgUploadPreview" alt="preview">
+        </div>
+        <div id="imgUploadDropText">
+          <i data-lucide="image-plus"></i>
+          <div>Tap buat pilih gambar</div>
+        </div>
+      </div>
+    `;
+    dlInputWrap.parentNode.insertBefore(picker, dlInputWrap);
+
+    const fileInput = document.getElementById('imgUploadFile');
+    const dropZone = document.getElementById('imgUploadDrop');
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('imgUploadPreview').src = e.target.result;
+        document.getElementById('imgUploadPreviewWrap').classList.remove('hidden');
+        document.getElementById('imgUploadDropText').classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    if (window.lucide) lucide.createIcons();
+  } else {
+    dlInputWrap.style.display = 'flex';
+    submitBtn.querySelector('span').textContent = 'Cari Video';
+  }
 
   if (platform === 'youtube') {
     const optionsDiv = document.createElement('div');
@@ -114,9 +167,70 @@ function closeDownloader(){
 }
 
 async function submitDownload(){
-  const url = document.getElementById('dlUrl').value.trim();
   const resultEl = document.getElementById('dlResult');
   const btn = document.getElementById('dlSubmit');
+
+  if (currentPlatform === 'imgupload') {
+    const fileInput = document.getElementById('imgUploadFile');
+    const file = fileInput && fileInput.files[0];
+    if (!file) {
+      resultEl.innerHTML = '<div class="dl-msg">Pilih gambar dulu ya.</div>';
+      return;
+    }
+
+    resultEl.innerHTML = '<div class="dl-msg">⏳ Mengupload gambar...</div>';
+    btn.style.opacity = '0.6';
+    btn.style.pointerEvents = 'none';
+
+    try {
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      const res = await fetch('/api/image-upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: dataUrl, fileName: file.name })
+      });
+      const data = await res.json();
+
+      if (data.ok && data.url) {
+        resultEl.innerHTML = `
+          <div class="dl-card">
+            <div class="dl-card-head"><div class="dl-author">✅ Berhasil di-upload</div></div>
+            <img class="dl-cover" src="${data.url}">
+            <div class="img-upload-link-row">
+              <input type="text" readonly value="${data.url}" id="imgUploadLinkResult">
+              <div class="g-btn primary" id="imgUploadCopyBtn">Copy</div>
+            </div>
+          </div>
+        `;
+        document.getElementById('imgUploadCopyBtn').addEventListener('click', () => {
+          const linkInput = document.getElementById('imgUploadLinkResult');
+          linkInput.select();
+          navigator.clipboard?.writeText(linkInput.value).catch(() => {});
+          document.getElementById('imgUploadCopyBtn').textContent = 'Ke-copy!';
+          setTimeout(() => {
+            const b = document.getElementById('imgUploadCopyBtn');
+            if (b) b.textContent = 'Copy';
+          }, 1500);
+        });
+      } else {
+        resultEl.innerHTML = `<div class="dl-msg error">${data.message || 'Gagal upload gambar.'}</div>`;
+      }
+    } catch (err) {
+      resultEl.innerHTML = '<div class="dl-msg error">Terjadi kesalahan saat menghubungi server.</div>';
+    } finally {
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    }
+    return;
+  }
+
+  const url = document.getElementById('dlUrl').value.trim();
 
   if (!url){
     resultEl.innerHTML = '<div class="dl-msg">Isi link-nya dulu ya.</div>';
