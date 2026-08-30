@@ -6,10 +6,27 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { getUsers, withUsers, getFile, putFile } = require('./githubDB');
-const { tiktokDl } = require('./scrapers/tiktok');
-const { igDl } = require('./scrapers/instagram');
-const { ytDl } = require('./scrapers/youtube');
-const { imgUploadDl } = require('./scrapers/imgupload');
+// Setiap scraper di-load dengan aman: kalau salah satu gagal (file
+// kurang, dependency belum ke-install, dll), yang lain tetap jalan
+// dan seluruh situs GAK ikut crash — cuma fitur itu doang yang error.
+function safeRequire(modulePath, label) {
+  try {
+    return require(modulePath);
+  } catch (e) {
+    console.error(`⚠️  Gagal load ${label} (${modulePath}):`, e.message);
+    return null;
+  }
+}
+
+const tiktokMod = safeRequire('./scrapers/tiktok', 'TikTok scraper');
+const igMod = safeRequire('./scrapers/instagram', 'Instagram scraper');
+const ytMod = safeRequire('./scrapers/youtube', 'YouTube scraper');
+const imgUploadMod = safeRequire('./scrapers/imgupload', 'Image Upload scraper');
+
+const tiktokDl = tiktokMod && tiktokMod.tiktokDl;
+const igDl = igMod && igMod.igDl;
+const ytDl = ytMod && ytMod.ytDl;
+const imgUploadDl = imgUploadMod && imgUploadMod.imgUploadDl;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -317,6 +334,13 @@ app.post('/api/logout', (req, res) => {
 });
 
 app.post('/api/image-upload', express.json({ limit: '12mb' }), async (req, res) => {
+  if (!imgUploadDl) {
+    return res.status(503).json({
+      ok: false,
+      message: 'Fitur upload gambar belum siap di server. Cek: file scrapers/imgupload.js sudah ke-upload? Dependency "form-data" sudah ada di package.json & ke-install?'
+    });
+  }
+
   const { imageBase64, fileName } = req.body || {};
   if (!imageBase64) {
     return res.status(400).json({ ok: false, message: 'Gak ada gambar yang dikirim.' });
@@ -355,10 +379,13 @@ app.post('/api/download', express.json(), async (req, res) => {
     let result;
     
     if (platform === 'tiktok') {
+      if (!tiktokDl) return res.status(503).json({ ok: false, message: 'Scraper TikTok belum siap di server (cek file scrapers/tiktok.js).' });
       result = await tiktokDl(url);
     } else if (platform === 'instagram') {
+      if (!igDl) return res.status(503).json({ ok: false, message: 'Scraper Instagram belum siap di server (cek file scrapers/instagram.js).' });
       result = await igDl(url);
     } else if (platform === 'youtube') {
+      if (!ytDl) return res.status(503).json({ ok: false, message: 'Scraper YouTube belum siap di server (cek file scrapers/youtube.js).' });
       // Jalankan fungsi ytDl dengan membawa parameter type dan quality
       result = await ytDl(url, type, quality);
     } else {
