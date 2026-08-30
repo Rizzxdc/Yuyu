@@ -23,12 +23,52 @@ function safeRequire(modulePath, label) {
 const tiktokMod = safeRequire('./scrapers/tiktok', 'TikTok scraper');
 const igMod = safeRequire('./scrapers/instagram', 'Instagram scraper');
 const ytMod = safeRequire('./scrapers/youtube', 'YouTube scraper');
-const imgUploadMod = safeRequire('./scrapers/imgupload', 'Image Upload scraper');
 
 const tiktokDl = tiktokMod && tiktokMod.tiktokDl;
 const igDl = igMod && igMod.igDl;
 const ytDl = ytMod && ytMod.ytDl;
-const imgUploadDl = imgUploadMod && imgUploadMod.imgUploadDl;
+
+// Fungsi upload gambar ke dropbyte.web.id ditulis LANGSUNG di sini
+// (bukan file terpisah), biar gak ada resiko "file baru gak ke-upload".
+const FormData = require('form-data');
+
+async function imgUploadDl(fileBuffer, fileName) {
+  try {
+    const form = new FormData();
+    form.append('file', fileBuffer, { filename: fileName || 'image.jpg' });
+
+    const response = await axios.post(
+      'https://api.dropbyte.web.id/api/v1/upload',
+      form,
+      { headers: form.getHeaders() }
+    );
+
+    const resData = response.data;
+    const link =
+      resData?.url ||
+      resData?.link ||
+      resData?.data?.url ||
+      resData?.data?.link ||
+      resData?.result?.url ||
+      resData?.result?.link ||
+      resData?.file_url ||
+      resData?.image_url;
+
+    if (!link) {
+      const err = new Error('Upload berhasil tapi link gak ketemu di response API.');
+      err.raw = resData;
+      throw err;
+    }
+
+    return { url: link, raw: resData };
+  } catch (e) {
+    if (e.raw) throw e;
+    const errorMessage = e.response?.data?.message || e.message || 'Gagal upload gambar.';
+    const err = new Error(errorMessage);
+    err.raw = e.response?.data;
+    throw err;
+  }
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -359,7 +399,7 @@ app.post('/api/image-upload', express.json({ limit: '12mb' }), async (req, res) 
   if (!imgUploadDl) {
     return res.status(503).json({
       ok: false,
-      message: 'Fitur upload gambar belum siap di server. Cek: file scrapers/imgupload.js sudah ke-upload? Dependency "form-data" sudah ada di package.json & ke-install?'
+      message: 'Fitur upload gambar belum siap di server. Cek: dependency "form-data" sudah ada di package.json & ke-install?'
     });
   }
 
