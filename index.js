@@ -5,10 +5,11 @@ const axios = require('axios');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { getUsers, withUsers } = require('./githubDB');
+const { getUsers, withUsers, getFile, putFile } = require('./githubDB');
 const { tiktokDl } = require('./scrapers/tiktok');
 const { igDl } = require('./scrapers/instagram');
 const { ytDl } = require('./scrapers/youtube');
+const { imgUploadDl } = require('./scrapers/imgupload');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -42,7 +43,8 @@ function requireAuth(req, res, next) {
       uid: decoded.uid,
       username: decoded.username,
       email: decoded.email,
-      maskedEmail: maskEmail(decoded.email)
+      maskedEmail: maskEmail(decoded.email),
+      hasAvatar: !!decoded.hasAvatar
     };
     next();
   } catch (e) {
@@ -89,7 +91,8 @@ const tools = {
   downloader: [
     { icon: '<i data-lucide="instagram"></i>', name: 'Instagram', sub: 'Download video & foto', badge: 'HD', open: 'dl-instagram', platform: 'instagram' },
     { icon: '<i data-lucide="music-2"></i>', name: 'TikTok', sub: 'No watermark', badge: 'MP4', open: 'dl-tiktok', platform: 'tiktok' },
-    { icon: '<svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#FF0000"/><path d="M9.5 8.3v7.4c0 .5.55.8 1 .55l6.4-3.7c.44-.26.44-.9 0-1.15l-6.4-3.7c-.45-.26-1 .05-1 .55z" fill="#fff"/></svg>', name: 'YouTube', sub: 'Video & audio HD', badge: 'MP4/MP3', open: 'dl-youtube', platform: 'youtube' }
+    { icon: '<svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#FF0000"/><path d="M9.5 8.3v7.4c0 .5.55.8 1 .55l6.4-3.7c.44-.26.44-.9 0-1.15l-6.4-3.7c-.45-.26-1 .05-1 .55z" fill="#fff"/></svg>', name: 'YouTube', sub: 'Video & audio HD', badge: 'MP4/MP3', open: 'dl-youtube', platform: 'youtube' },
+    { icon: '<i data-lucide="image-up"></i>', name: 'Uploader Gambar', sub: 'Upload gambar, dapetin link', badge: 'BARU', open: 'dl-imgupload', platform: 'imgupload' }
   ]
 };
 
@@ -106,7 +109,12 @@ app.get('/register', redirectIfLoggedIn, (req, res) => {
 });
 
 function signToken(user) {
-  return jwt.sign({ uid: user.id, username: user.username, email: user.email }, JWT_SECRET, {
+  return jwt.sign({
+    uid: user.id,
+    username: user.username,
+    email: user.email,
+    hasAvatar: !!user.hasAvatar
+  }, JWT_SECRET, {
     expiresIn: TOKEN_EXPIRES_IN
   });
 }
@@ -250,9 +258,89 @@ app.get('/api/debug-github', async (req, res) => {
   }
 });
 
+app.post('/api/upload-avatar', requireAuth, express.json({ limit: '6mb' }), async (req, res) => {
+  const { imageBase64 } = req.body || {};
+  if (!imageBase64) {
+    return res.status(400).json({ ok: false, message: 'Gak ada gambar yang dikirim.' });
+  }
+
+  const match = imageBase64.match(/^data:image\/(jpeg|jpg|png);base64,(.+)$/);
+  if (!match) {
+    return res.status(400).json({ ok: false, message: 'Format gambar harus JPEG/PNG.' });
+  }
+  const rawBase64 = match[2];
+
+  const sizeInBytes = Buffer.byteLength(rawBase64, 'base64');
+  if (sizeInBytes > 2 * 1024 * 1024) {
+    return res.status(400).json({ ok: false, message: 'Ukuran foto kegedean, maks 2MB.' });
+  }
+
+  try {
+    const filePath = `data/avatars/${req.user.uid}.jpg`;
+    await putFile(filePath, rawBase64, `Update avatar ${req.user.username}`);
+
+    await withUsers((users) =>
+      users.map(u => u.id === req.user.uid ? { ...u, hasAvatar: true } : u)
+    );
+
+    const token = signToken({
+      id: req.user.uid,
+      username: req.user.username,
+      email: req.user.email,
+      hasAvatar: true
+    });
+    setAuthCookie(res, token);
+
+    return res.json({ ok: true, avatarUrl: `/avatar/${req.user.uid}` });
+  } catch (e) {
+    console.error('Upload avatar error:', e.message);
+    return res.status(500).json({ ok: false, message: 'Gagal upload foto, coba lagi.' });
+  }
+});
+
+app.get('/avatar/:uid', async (req, res) => {
+  try {
+    const file = await getFile(`data/avatars/${req.params.uid}.jpg`);
+    if (!file) return res.status(404).send('Not found');
+    const buffer = Buffer.from(file.content, 'base64');
+    res.setHeader('Content-Type', 'image/jpeg');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    return res.send(buffer);
+  } catch (e) {
+    return res.status(404).send('Not found');
+  }
+});
+
 app.post('/api/logout', (req, res) => {
   res.clearCookie(TOKEN_COOKIE_NAME);
   return res.json({ ok: true });
+});
+
+app.post('/api/image-upload', express.json({ limit: '12mb' }), async (req, res) => {
+  const { imageBase64, fileName } = req.body || {};
+  if (!imageBase64) {
+    return res.status(400).json({ ok: false, message: 'Gak ada gambar yang dikirim.' });
+  }
+
+  const match = imageBase64.match(/^data:image\/(jpeg|jpg|png|webp|gif);base64,(.+)$/);
+  if (!match) {
+    return res.status(400).json({ ok: false, message: 'Format gambar harus JPEG/PNG/WEBP/GIF.' });
+  }
+  const ext = match[1];
+  const rawBase64 = match[2];
+  const buffer = Buffer.from(rawBase64, 'base64');
+
+  if (buffer.length > 8 * 1024 * 1024) {
+    return res.status(400).json({ ok: false, message: 'Ukuran gambar kegedean, maks 8MB.' });
+  }
+
+  try {
+    const result = await imgUploadDl(buffer, fileName || `upload.${ext}`);
+    return res.json({ ok: true, url: result.url });
+  } catch (e) {
+    console.error('Image upload error:', e.message, e.raw || '');
+    return res.status(500).json({ ok: false, message: e.message || 'Gagal upload gambar.' });
+  }
 });
 
 app.post('/api/download', express.json(), async (req, res) => {
