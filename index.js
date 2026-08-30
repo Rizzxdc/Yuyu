@@ -94,6 +94,40 @@ async function npmDl(packageUrl) {
   }
 }
 
+// Stalk akun TikTok — terima username biasa, "@username", atau link profil
+async function stalkTiktokDl(usernameInput) {
+  try {
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) throw new Error('API Key belum di-setting di file .env');
+
+    let username = (usernameInput || '').trim();
+    const urlMatch = username.match(/tiktok\.com\/@([a-zA-Z0-9._]+)/i);
+    if (urlMatch) username = urlMatch[1];
+    username = username.replace(/^@/, '');
+
+    if (!username) throw new Error('Username TikTok belum diisi.');
+
+    const endpoint = `https://api.kaelstore.xyz/api/stalk/tiktok?username=${encodeURIComponent(username)}&apikey=${apiKey}`;
+    const response = await axios.get(endpoint, { headers: { Accept: 'application/json' } });
+    const resData = response.data;
+
+    if (!resData.status) {
+      throw new Error(resData.message || 'API Kael menolak permintaan (Status False)');
+    }
+    if (!resData.result) {
+      throw new Error('Data akun kosong dari Kael API, cek username-nya bener gak.');
+    }
+
+    const r = resData.result;
+    const proxiedAvatar = r.avatar ? `https://wsrv.nl/?url=${encodeURIComponent(r.avatar)}` : '';
+
+    return { ...r, avatar: proxiedAvatar };
+  } catch (e) {
+    const errorMessage = e.response?.data?.message || e.message || 'Gagal mengambil data akun TikTok.';
+    throw new Error(errorMessage);
+  }
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'ganti-secret-ini-di-env';
@@ -177,6 +211,9 @@ const tools = {
     { icon: '<svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#FF0000"/><path d="M9.5 8.3v7.4c0 .5.55.8 1 .55l6.4-3.7c.44-.26.44-.9 0-1.15l-6.4-3.7c-.45-.26-1 .05-1 .55z" fill="#fff"/></svg>', name: 'YouTube', sub: 'Video & audio HD', badge: 'MP4/MP3', open: 'dl-youtube', platform: 'youtube' },
     { icon: '<i data-lucide="image-up"></i>', name: 'Uploader Gambar', sub: 'Upload gambar, dapetin link', badge: 'BARU', open: 'dl-imgupload', platform: 'imgupload' },
     { icon: '<svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="4" fill="#CB3837"/><text x="12" y="15.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="#fff">NPM</text></svg>', name: 'NPM Package', sub: 'Cek info & download package npm', badge: 'BARU', open: 'dl-npm', platform: 'npm' }
+  ],
+  stalk: [
+    { icon: '<i data-lucide="music-2"></i>', name: 'Stalk TikTok', sub: 'Cek info akun TikTok', badge: 'BARU', open: 'stalk-tiktok', platform: 'stalktiktok' }
   ]
 };
 
@@ -477,6 +514,8 @@ app.post('/api/download', express.json(), async (req, res) => {
       result = await ytDl(url, type, quality);
     } else if (platform === 'npm') {
       result = await npmDl(url);
+    } else if (platform === 'stalktiktok') {
+      result = await stalkTiktokDl(url);
     } else {
       return res.status(400).json({ ok: false, message: `Scraper untuk ${platform} belum dipasang.` });
     }
