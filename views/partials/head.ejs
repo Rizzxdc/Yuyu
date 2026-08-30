@@ -758,6 +758,32 @@ body{
   color: var(--text);
 }
 
+/* STALK TIKTOK CARD */
+.stalk-head{
+  display:flex; align-items:center; gap:12px;
+}
+.stalk-avatar{
+  width:56px; height:56px; border-radius:50%;
+  object-fit:cover;
+  border:2px solid var(--line);
+  box-shadow: 0 0 0 2px var(--accent);
+  flex-shrink:0;
+}
+.stalk-head-text{ min-width:0; }
+.stalk-nickname{
+  font-size:15px; font-weight:800;
+  display:flex; align-items:center; gap:5px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.stalk-verified{ width:15px; height:15px; color:#3b82f6; flex-shrink:0; stroke:currentColor; }
+.stalk-username{ font-size:12.5px; color:var(--muted); margin-top:2px; }
+.stalk-bio{ font-size:13px; color:var(--muted); margin-top:12px; line-height:1.5; white-space:pre-wrap; }
+.stalk-stats-grid{
+  display:grid; grid-template-columns: repeat(4, 1fr);
+  gap:8px;
+  margin-top:14px;
+}
+
 .g-over{
   position:absolute; inset:0;
   background: rgba(10,13,22,0.88);
