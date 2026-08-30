@@ -9,11 +9,13 @@ const { getUsers, withUsers, getFile, putFile } = require('./githubDB');
 // Setiap scraper di-load dengan aman: kalau salah satu gagal (file
 // kurang, dependency belum ke-install, dll), yang lain tetap jalan
 // dan seluruh situs GAK ikut crash — cuma fitur itu doang yang error.
+const moduleLoadErrors = {};
 function safeRequire(modulePath, label) {
   try {
     return require(modulePath);
   } catch (e) {
     console.error(`⚠️  Gagal load ${label} (${modulePath}):`, e.message);
+    moduleLoadErrors[label] = e.message;
     return null;
   }
 }
@@ -234,6 +236,26 @@ app.post('/api/login', express.json(), async (req, res) => {
 
 // Endpoint bantu buat ngecek koneksi GITHUB_TOKEN/GITHUB_REPO tanpa
 // perlu daftar akun dulu. Buka aja di browser: /api/debug-github
+// Endpoint bantu buat ngecek kenapa fitur upload gambar "belum siap
+// di server". Buka aja di browser: /api/debug-imgupload
+app.get('/api/debug-imgupload', (req, res) => {
+  let formDataOk = true;
+  let formDataError = null;
+  try {
+    require('form-data');
+  } catch (e) {
+    formDataOk = false;
+    formDataError = e.message;
+  }
+
+  res.json({
+    scraper_imgupload_berhasil_dimuat: !!imgUploadDl,
+    error_saat_load_scraper: moduleLoadErrors['Image Upload scraper'] || null,
+    package_form_data_bisa_di_require: formDataOk,
+    error_form_data: formDataError
+  });
+});
+
 app.get('/api/debug-github', async (req, res) => {
   const repo = process.env.GITHUB_REPO;
   const hasToken = !!process.env.GITHUB_TOKEN;
