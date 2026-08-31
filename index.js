@@ -128,6 +128,65 @@ async function stalkTiktokDl(usernameInput) {
   }
 }
 
+// Stalk akun GitHub — terima username biasa atau link profil
+async function stalkGithubDl(usernameInput) {
+  try {
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) throw new Error('API Key belum di-setting di file .env');
+
+    let username = (usernameInput || '').trim();
+    const urlMatch = username.match(/github\.com\/([a-zA-Z0-9-]+)/i);
+    if (urlMatch) username = urlMatch[1];
+    username = username.replace(/^@/, '');
+
+    if (!username) throw new Error('Username GitHub belum diisi.');
+
+    const endpoint = `https://api.kaelstore.xyz/api/stalk/github?username=${encodeURIComponent(username)}&apikey=${apiKey}`;
+    const response = await axios.get(endpoint, { headers: { Accept: 'application/json' } });
+    const resData = response.data;
+
+    if (!resData.status) {
+      throw new Error(resData.message || 'API Kael menolak permintaan (Status False)');
+    }
+    if (!resData.result) {
+      throw new Error('Data akun kosong dari Kael API, cek username-nya bener gak.');
+    }
+
+    return resData.result;
+  } catch (e) {
+    const errorMessage = e.response?.data?.message || e.message || 'Gagal mengambil data akun GitHub.';
+    throw new Error(errorMessage);
+  }
+}
+
+// Stalk akun Roblox — API ini beda (azbry.com) & gak butuh API key
+async function stalkRobloxDl(usernameInput) {
+  try {
+    let username = (usernameInput || '').trim();
+    const paramMatch = username.match(/[?&]username=([a-zA-Z0-9_]+)/i);
+    if (paramMatch) username = paramMatch[1];
+    username = username.replace(/^@/, '');
+
+    if (!username) throw new Error('Username Roblox belum diisi.');
+
+    const endpoint = `https://api.azbry.com/api/stalk/roblox?username=${encodeURIComponent(username)}`;
+    const response = await axios.get(endpoint, { headers: { Accept: 'application/json' } });
+    const resData = response.data;
+
+    if (!resData.status) {
+      throw new Error(resData.message || 'API menolak permintaan (Status False)');
+    }
+    if (!resData.result) {
+      throw new Error('Data akun kosong dari API, cek username-nya bener gak.');
+    }
+
+    return resData.result;
+  } catch (e) {
+    const errorMessage = e.response?.data?.message || e.message || 'Gagal mengambil data akun Roblox.';
+    throw new Error(errorMessage);
+  }
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'ganti-secret-ini-di-env';
@@ -213,7 +272,9 @@ const tools = {
     { icon: '<svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="4" fill="#CB3837"/><text x="12" y="15.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="#fff">NPM</text></svg>', name: 'NPM Package', sub: 'Cek info & download package npm', badge: 'BARU', open: 'dl-npm', platform: 'npm' }
   ],
   stalk: [
-    { icon: '<i data-lucide="music-2"></i>', name: 'Stalk TikTok', sub: 'Cek info akun TikTok', badge: 'BARU', open: 'stalk-tiktok', platform: 'stalktiktok' }
+    { icon: '<i data-lucide="music-2"></i>', name: 'Stalk TikTok', sub: 'Cek info akun TikTok', badge: 'BARU', open: 'stalk-tiktok', platform: 'stalktiktok' },
+    { icon: '<i data-lucide="github"></i>', name: 'Stalk GitHub', sub: 'Cek info akun & repo GitHub', badge: 'BARU', open: 'stalk-github', platform: 'stalkgithub' },
+    { icon: '<i data-lucide="box"></i>', name: 'Stalk Roblox', sub: 'Cek info akun Roblox', badge: 'BARU', open: 'stalk-roblox', platform: 'stalkroblox' }
   ]
 };
 
@@ -516,6 +577,10 @@ app.post('/api/download', express.json(), async (req, res) => {
       result = await npmDl(url);
     } else if (platform === 'stalktiktok') {
       result = await stalkTiktokDl(url);
+    } else if (platform === 'stalkgithub') {
+      result = await stalkGithubDl(url);
+    } else if (platform === 'stalkroblox') {
+      result = await stalkRobloxDl(url);
     } else {
       return res.status(400).json({ ok: false, message: `Scraper untuk ${platform} belum dipasang.` });
     }
