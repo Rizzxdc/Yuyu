@@ -34,6 +34,18 @@ const dlMeta = {
     placeholder: 'Masukin username TikTok (tanpa @)...',
     tip: '💡 Masukin username TikTok (atau link profilnya) buat liat infonya!',
     icon: '<i data-lucide="search"></i>'
+  },
+  stalkgithub: {
+    title: '🐙 Stalk GitHub',
+    placeholder: 'Masukin username GitHub...',
+    tip: '💡 Masukin username GitHub (atau link profilnya) buat liat info & repo-nya!',
+    icon: '<i data-lucide="github"></i>'
+  },
+  stalkroblox: {
+    title: '🎮 Stalk Roblox',
+    placeholder: 'Masukin username Roblox...',
+    tip: '💡 Masukin username Roblox buat liat infonya!',
+    icon: '<i data-lucide="box"></i>'
   }
 };
 
@@ -146,7 +158,7 @@ function openDownloader(platform){
     dlInputWrap.style.display = 'flex';
     if (platform === 'npm') {
       submitBtn.querySelector('span').textContent = 'Cek Package';
-    } else if (platform === 'stalktiktok') {
+    } else if (platform === 'stalktiktok' || platform === 'stalkgithub' || platform === 'stalkroblox') {
       submitBtn.querySelector('span').textContent = 'Cek Akun';
     } else {
       submitBtn.querySelector('span').textContent = 'Cari Video';
@@ -350,6 +362,111 @@ async function submitDownload(){
             </div>
             <div class="dl-actions">
               <a href="https://www.tiktok.com/@${r.uniqueId}" target="_blank" rel="noopener" class="dl-action-btn secondary"><i data-lucide="external-link"></i> Buka Profil TikTok</a>
+            </div>
+          </div>
+        `;
+
+        resultEl.innerHTML = html;
+        if (window.lucide) lucide.createIcons();
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+        return;
+      }
+
+      if (currentPlatform === 'stalkgithub') {
+        const r = data.data;
+        const joinDate = r.created_at
+          ? new Date(r.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long' })
+          : null;
+
+        const metaItems = [];
+        if (r.company) metaItems.push(`<div class="npm-meta-item"><i data-lucide="building-2"></i> ${r.company}</div>`);
+        if (r.location) metaItems.push(`<div class="npm-meta-item"><i data-lucide="map-pin"></i> ${r.location}</div>`);
+        if (r.blog) {
+          const blogHref = r.blog.startsWith('http') ? r.blog : `https://${r.blog}`;
+          metaItems.push(`<a href="${blogHref}" target="_blank" rel="noopener" class="npm-meta-item"><i data-lucide="link"></i> ${r.blog}</a>`);
+        }
+        if (joinDate) metaItems.push(`<div class="npm-meta-item"><i data-lucide="calendar"></i> Sejak ${joinDate}</div>`);
+
+        const repoRows = (r.repositories || []).map(repo => `
+          <a href="${repo.url}" target="_blank" rel="noopener" class="gh-repo-row">
+            <div class="gh-repo-top">
+              <div class="gh-repo-name">${repo.name}</div>
+              ${repo.language ? `<div class="gh-repo-lang">${repo.language}</div>` : ''}
+            </div>
+            ${repo.description ? `<div class="gh-repo-desc">${repo.description}</div>` : ''}
+            <div class="gh-repo-stats">
+              <span><i data-lucide="star"></i> ${repo.stars ?? 0}</span>
+              <span><i data-lucide="git-fork"></i> ${repo.forks ?? 0}</span>
+            </div>
+          </a>
+        `).join('');
+
+        let html = `
+          <div class="dl-card stalk-card">
+            <div class="stalk-head">
+              <img class="stalk-avatar" src="${r.avatar}" alt="avatar" onerror="this.style.display='none'">
+              <div class="stalk-head-text">
+                <div class="stalk-nickname">${r.name || r.username || '-'}</div>
+                <div class="stalk-username">@${r.username || '-'}</div>
+              </div>
+            </div>
+            ${r.bio ? `<div class="stalk-bio">${r.bio}</div>` : ''}
+            ${metaItems.length ? `<div class="npm-meta-row">${metaItems.join('')}</div>` : ''}
+            <div class="stalk-stats-grid gh-stats-grid">
+              <div class="npm-stat"><div class="npm-stat-val">${formatNum(r.public_repos)}</div><div class="npm-stat-label">Repos</div></div>
+              <div class="npm-stat"><div class="npm-stat-val">${formatNum(r.followers)}</div><div class="npm-stat-label">Followers</div></div>
+              <div class="npm-stat"><div class="npm-stat-val">${formatNum(r.following)}</div><div class="npm-stat-label">Following</div></div>
+            </div>
+            ${repoRows ? `
+              <div class="npm-deps-label">📁 ${r.repositoriesFetched || (r.repositories || []).length} Repo Terbaru:</div>
+              <div class="gh-repo-list">${repoRows}</div>
+            ` : ''}
+            <div class="dl-actions">
+              <a href="${r.profile}" target="_blank" rel="noopener" class="dl-action-btn secondary"><i data-lucide="external-link"></i> Buka Profil GitHub</a>
+            </div>
+          </div>
+        `;
+
+        resultEl.innerHTML = html;
+        if (window.lucide) lucide.createIcons();
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+        return;
+      }
+
+      if (currentPlatform === 'stalkroblox') {
+        const r = data.data;
+        const joinDate = r.created
+          ? new Date(r.created).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
+          : null;
+        const isOnline = r.presence && (r.presence.status || '').toLowerCase() === 'online';
+        const statusText = (r.presence && r.presence.status) || 'Unknown';
+        const statusBadge = `<span class="rbx-status-badge ${isOnline ? 'online' : 'offline'}">${statusText}</span>`;
+        const bannedBadge = r.isBanned ? '<div class="rbx-banned-badge"><i data-lucide="ban"></i> Akun ini di-banned</div>' : '';
+
+        const metaItems = [];
+        if (joinDate) metaItems.push(`<div class="npm-meta-item"><i data-lucide="calendar"></i> Sejak ${joinDate}</div>`);
+        if (r.id) metaItems.push(`<div class="npm-meta-item"><i data-lucide="hash"></i> ID: ${r.id}</div>`);
+
+        let html = `
+          <div class="dl-card stalk-card">
+            <div class="stalk-head">
+              <img class="stalk-avatar" src="${r.avatar}" alt="avatar" onerror="this.style.display='none'">
+              <div class="stalk-head-text">
+                <div class="stalk-nickname">${r.displayName || r.username || '-'} ${statusBadge}</div>
+                <div class="stalk-username">@${r.username || '-'}</div>
+              </div>
+            </div>
+            ${bannedBadge}
+            ${metaItems.length ? `<div class="npm-meta-row">${metaItems.join('')}</div>` : ''}
+            <div class="stalk-stats-grid gh-stats-grid">
+              <div class="npm-stat"><div class="npm-stat-val">${formatNum(r.social && r.social.friends)}</div><div class="npm-stat-label">Friends</div></div>
+              <div class="npm-stat"><div class="npm-stat-val">${formatNum(r.social && r.social.followers)}</div><div class="npm-stat-label">Followers</div></div>
+              <div class="npm-stat"><div class="npm-stat-val">${formatNum(r.social && r.social.following)}</div><div class="npm-stat-label">Following</div></div>
+            </div>
+            <div class="dl-actions">
+              <a href="${r.profileUrl}" target="_blank" rel="noopener" class="dl-action-btn secondary"><i data-lucide="external-link"></i> Buka Profil Roblox</a>
             </div>
           </div>
         `;
