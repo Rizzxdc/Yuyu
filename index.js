@@ -277,7 +277,8 @@ const tools = {
     { icon: '<i data-lucide="box"></i>', name: 'Stalk Roblox', sub: 'Cek info akun Roblox', badge: 'BARU', open: 'stalk-roblox', platform: 'stalkroblox' }
   ],
   maker: [
-    { icon: '<i data-lucide="wallet"></i>', name: 'Fake DANA', sub: 'Bikin screenshot saldo DANA', badge: 'BARU', open: 'maker-fakedana', platform: 'fakedana' }
+    { icon: '<i data-lucide="wallet"></i>', name: 'Fake DANA', sub: 'Bikin screenshot saldo DANA', badge: 'BARU', open: 'maker-fakedana', platform: 'fakedana' },
+    { icon: '<i data-lucide="gamepad-2"></i>', name: 'Fake FF Profile', sub: 'Bikin screenshot profil Free Fire', badge: 'BARU', open: 'maker-fakeff', platform: 'fakeff' }
   ]
 };
 
@@ -535,6 +536,27 @@ app.get('/api/maker/fakedana', async (req, res) => {
     return res.send(Buffer.from(response.data));
   } catch (e) {
     console.error('Fake DANA maker error:', e.message);
+    return res.status(500).send('Gagal generate gambar, coba lagi.');
+  }
+});
+
+app.get('/api/maker/fakeff', async (req, res) => {
+  const name = (req.query.name || '').toString().trim();
+  if (!name) {
+    return res.status(400).send('Nama belum diisi.');
+  }
+
+  try {
+    const response = await axios.get(
+      `https://api.azbry.com/api/maker/fakeff?name=${encodeURIComponent(name)}`,
+      { responseType: 'arraybuffer' }
+    );
+    const contentType = response.headers['content-type'] || 'image/png';
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'no-store');
+    return res.send(Buffer.from(response.data));
+  } catch (e) {
+    console.error('Fake FF maker error:', e.message);
     return res.status(500).send('Gagal generate gambar, coba lagi.');
   }
 });
