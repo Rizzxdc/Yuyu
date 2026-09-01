@@ -275,6 +275,9 @@ const tools = {
     { icon: '<i data-lucide="music-2"></i>', name: 'Stalk TikTok', sub: 'Cek info akun TikTok', badge: 'BARU', open: 'stalk-tiktok', platform: 'stalktiktok' },
     { icon: '<i data-lucide="github"></i>', name: 'Stalk GitHub', sub: 'Cek info akun & repo GitHub', badge: 'BARU', open: 'stalk-github', platform: 'stalkgithub' },
     { icon: '<i data-lucide="box"></i>', name: 'Stalk Roblox', sub: 'Cek info akun Roblox', badge: 'BARU', open: 'stalk-roblox', platform: 'stalkroblox' }
+  ],
+  maker: [
+    { icon: '<i data-lucide="wallet"></i>', name: 'Fake DANA', sub: 'Bikin screenshot saldo DANA', badge: 'BARU', open: 'maker-fakedana', platform: 'fakedana' }
   ]
 };
 
@@ -510,6 +513,29 @@ app.get('/avatar/:uid', async (req, res) => {
     return res.send(buffer);
   } catch (e) {
     return res.status(404).send('Not found');
+  }
+});
+
+// MAKER: Fake DANA — API-nya balikin gambar langsung (bukan JSON),
+// jadi di-proxy lewat server biar aman dari CORS & konsisten.
+app.get('/api/maker/fakedana', async (req, res) => {
+  const amount = (req.query.amount || '').toString().trim();
+  if (!amount || isNaN(amount)) {
+    return res.status(400).send('Amount belum diisi / bukan angka.');
+  }
+
+  try {
+    const response = await axios.get(
+      `https://api.azbry.com/api/maker/fakedana?amount=${encodeURIComponent(amount)}`,
+      { responseType: 'arraybuffer' }
+    );
+    const contentType = response.headers['content-type'] || 'image/png';
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'no-store');
+    return res.send(Buffer.from(response.data));
+  } catch (e) {
+    console.error('Fake DANA maker error:', e.message);
+    return res.status(500).send('Gagal generate gambar, coba lagi.');
   }
 });
 
