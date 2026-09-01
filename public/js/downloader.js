@@ -52,6 +52,12 @@ const dlMeta = {
     placeholder: 'Masukin jumlah saldo (contoh: 1000000)...',
     tip: '💡 Masukin nominal saldo yang mau ditampilin, terus generate gambarnya!',
     icon: '<i data-lucide="wallet"></i>'
+  },
+  fakeff: {
+    title: '🎮 Fake FF Profile',
+    placeholder: 'Masukin nama yang mau ditampilin...',
+    tip: '💡 Masukin nama yang mau ditampilin di profil Free Fire palsunya!',
+    icon: '<i data-lucide="gamepad-2"></i>'
   }
 };
 
@@ -168,6 +174,8 @@ function openDownloader(platform){
       submitBtn.querySelector('span').textContent = 'Cek Akun';
     } else if (platform === 'fakedana') {
       submitBtn.querySelector('span').textContent = 'Generate Gambar';
+    } else if (platform === 'fakeff') {
+      submitBtn.querySelector('span').textContent = 'Generate Gambar';
     } else {
       submitBtn.querySelector('span').textContent = 'Cari Video';
     }
@@ -252,6 +260,44 @@ async function submitDownload(){
       btn.style.pointerEvents = 'auto';
     };
     testImg.src = imgUrl;
+    return;
+  }
+
+  if (currentPlatform === 'fakeff') {
+    const nameVal = document.getElementById('dlUrl').value.trim();
+    if (!nameVal) {
+      resultEl.innerHTML = '<div class="dl-msg">Isi nama yang mau ditampilin dulu ya.</div>';
+      return;
+    }
+
+    resultEl.innerHTML = '<div class="dl-msg">⏳ Generate gambar...</div>';
+    btn.style.opacity = '0.6';
+    btn.style.pointerEvents = 'none';
+
+    const imgUrl = `/api/maker/fakeff?name=${encodeURIComponent(nameVal)}&t=${Date.now()}`;
+    const testImg2 = new Image();
+    testImg2.onload = () => {
+      resultEl.innerHTML = `
+        <div class="dl-card">
+          <img class="dl-cover" src="${imgUrl}">
+          <div class="dl-actions">
+            <div class="dl-action-btn" id="fakeFfDlBtn"><i data-lucide="download"></i> Download Gambar</div>
+          </div>
+        </div>
+      `;
+      document.getElementById('fakeFfDlBtn').addEventListener('click', (e) => {
+        forceDirectDl(e, imgUrl, `fake-ff-${nameVal}.png`);
+      });
+      if (window.lucide) lucide.createIcons();
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    };
+    testImg2.onerror = () => {
+      resultEl.innerHTML = '<div class="dl-msg error">Gagal generate gambar, coba lagi.</div>';
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    };
+    testImg2.src = imgUrl;
     return;
   }
 
