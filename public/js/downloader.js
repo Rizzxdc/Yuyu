@@ -46,6 +46,12 @@ const dlMeta = {
     placeholder: 'Masukin username Roblox...',
     tip: '💡 Masukin username Roblox buat liat infonya!',
     icon: '<i data-lucide="box"></i>'
+  },
+  fakedana: {
+    title: '💳 Fake DANA',
+    placeholder: 'Masukin jumlah saldo (contoh: 1000000)...',
+    tip: '💡 Masukin nominal saldo yang mau ditampilin, terus generate gambarnya!',
+    icon: '<i data-lucide="wallet"></i>'
   }
 };
 
@@ -160,9 +166,13 @@ function openDownloader(platform){
       submitBtn.querySelector('span').textContent = 'Cek Package';
     } else if (platform === 'stalktiktok' || platform === 'stalkgithub' || platform === 'stalkroblox') {
       submitBtn.querySelector('span').textContent = 'Cek Akun';
+    } else if (platform === 'fakedana') {
+      submitBtn.querySelector('span').textContent = 'Generate Gambar';
     } else {
       submitBtn.querySelector('span').textContent = 'Cari Video';
     }
+
+    input.setAttribute('inputmode', platform === 'fakedana' ? 'numeric' : 'text');
   }
 
   if (platform === 'youtube') {
@@ -206,6 +216,44 @@ function closeDownloader(){
 async function submitDownload(){
   const resultEl = document.getElementById('dlResult');
   const btn = document.getElementById('dlSubmit');
+
+  if (currentPlatform === 'fakedana') {
+    const amount = document.getElementById('dlUrl').value.trim();
+    if (!amount || isNaN(amount) || Number(amount) <= 0) {
+      resultEl.innerHTML = '<div class="dl-msg">Isi jumlah saldo yang valid ya (angka aja, contoh: 1000000).</div>';
+      return;
+    }
+
+    resultEl.innerHTML = '<div class="dl-msg">⏳ Generate gambar...</div>';
+    btn.style.opacity = '0.6';
+    btn.style.pointerEvents = 'none';
+
+    const imgUrl = `/api/maker/fakedana?amount=${encodeURIComponent(amount)}&t=${Date.now()}`;
+    const testImg = new Image();
+    testImg.onload = () => {
+      resultEl.innerHTML = `
+        <div class="dl-card">
+          <img class="dl-cover" src="${imgUrl}">
+          <div class="dl-actions">
+            <div class="dl-action-btn" id="fakeDanaDlBtn"><i data-lucide="download"></i> Download Gambar</div>
+          </div>
+        </div>
+      `;
+      document.getElementById('fakeDanaDlBtn').addEventListener('click', (e) => {
+        forceDirectDl(e, imgUrl, `fake-dana-${amount}.png`);
+      });
+      if (window.lucide) lucide.createIcons();
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    };
+    testImg.onerror = () => {
+      resultEl.innerHTML = '<div class="dl-msg error">Gagal generate gambar, coba lagi.</div>';
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    };
+    testImg.src = imgUrl;
+    return;
+  }
 
   if (currentPlatform === 'imgupload') {
     const fileInput = document.getElementById('imgUploadFile');
