@@ -5,6 +5,7 @@
   <div class="tab" data-cat="game"><i data-lucide="gamepad-2"></i> MINI GAME</div>
   <div class="tab" data-cat="downloader"><i data-lucide="download"></i> DOWNLOADER</div>
   <div class="tab" data-cat="stalk"><i data-lucide="search"></i> STALK</div>
+  <div class="tab" data-cat="maker"><i data-lucide="wand-2"></i> MAKER</div>
 </div>
 
 <div class="grid" id="grid">
@@ -28,6 +29,15 @@
   <% }) %>
   <% tools.stalk.forEach(item => { %>
     <div class="card stalk" data-cat="stalk" <% if (item.open) { %>data-open="<%= item.open %>" data-platform="<%= item.platform %>"<% } %>>
+      <div class="card-icon"><%- item.icon %></div>
+      <div class="card-name"><%= item.name %></div>
+      <div class="card-sub"><%= item.sub %></div>
+      <div class="badge"><%= item.badge %></div>
+      <div class="card-arrow">→</div>
+    </div>
+  <% }) %>
+  <% tools.maker.forEach(item => { %>
+    <div class="card maker" data-cat="maker" <% if (item.open) { %>data-open="<%= item.open %>" data-platform="<%= item.platform %>"<% } %>>
       <div class="card-icon"><%- item.icon %></div>
       <div class="card-name"><%= item.name %></div>
       <div class="card-sub"><%= item.sub %></div>
