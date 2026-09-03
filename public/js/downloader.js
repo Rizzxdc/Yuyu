@@ -58,6 +58,12 @@ const dlMeta = {
     placeholder: 'Masukin nama yang mau ditampilin...',
     tip: '💡 Masukin nama yang mau ditampilin di profil Free Fire palsunya!',
     icon: '<i data-lucide="gamepad-2"></i>'
+  },
+  artinama: {
+    title: '✨ Arti Nama',
+    placeholder: 'Masukin nama yang mau dicek...',
+    tip: '💡 Masukin nama yang mau dicek artinya!',
+    icon: '<i data-lucide="sparkles"></i>'
   }
 };
 
@@ -176,6 +182,8 @@ function openDownloader(platform){
       submitBtn.querySelector('span').textContent = 'Generate Gambar';
     } else if (platform === 'fakeff') {
       submitBtn.querySelector('span').textContent = 'Generate Gambar';
+    } else if (platform === 'artinama') {
+      submitBtn.querySelector('span').textContent = 'Cek Arti';
     } else {
       submitBtn.querySelector('span').textContent = 'Cari Video';
     }
@@ -298,6 +306,47 @@ async function submitDownload(){
       btn.style.pointerEvents = 'auto';
     };
     testImg2.src = imgUrl;
+    return;
+  }
+
+  if (currentPlatform === 'artinama') {
+    const namaVal = document.getElementById('dlUrl').value.trim();
+    if (!namaVal) {
+      resultEl.innerHTML = '<div class="dl-msg">Isi nama yang mau dicek dulu ya.</div>';
+      return;
+    }
+
+    resultEl.innerHTML = '<div class="dl-msg">⏳ Mencari arti nama...</div>';
+    btn.style.opacity = '0.6';
+    btn.style.pointerEvents = 'none';
+
+    try {
+      const res = await fetch('/api/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ platform: 'artinama', url: namaVal })
+      });
+      const data = await res.json();
+
+      if (data.ok && data.data) {
+        const d = data.data;
+        resultEl.innerHTML = `
+          <div class="dl-card">
+            <div class="dl-card-head"><div class="dl-author">✨ ${d.nama}</div></div>
+            ${d.arti ? `<div class="npm-desc" style="margin-top:8px;">${d.arti}</div>` : ''}
+            ${d.catatan ? `<div class="npm-meta-row"><div class="npm-meta-item"><i data-lucide="info"></i> ${d.catatan}</div></div>` : ''}
+          </div>
+        `;
+        if (window.lucide) lucide.createIcons();
+      } else {
+        resultEl.innerHTML = `<div class="dl-msg error">${data.message || 'Gagal cek arti nama.'}</div>`;
+      }
+    } catch (err) {
+      resultEl.innerHTML = '<div class="dl-msg error">Terjadi kesalahan saat menghubungi server.</div>';
+    } finally {
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    }
     return;
   }
 
