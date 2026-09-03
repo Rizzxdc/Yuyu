@@ -82,7 +82,7 @@ document.querySelectorAll('[data-open]').forEach(el=>{
     if (target === 'balloon'){ overlayBalloon.classList.remove('hidden'); showStartScreen('balloon'); }
     if (target === 'word'){ overlayWord.classList.remove('hidden'); showStartScreen('word'); }
     if (target === 'piano'){ overlayPiano.classList.remove('hidden'); showStartScreen('piano'); }
-    if (target && (target.startsWith('dl-') || target.startsWith('stalk-') || target.startsWith('maker-'))){ overlayDownloader.classList.remove('hidden'); openDownloader(el.dataset.platform); }
+    if (target && (target.startsWith('dl-') || target.startsWith('stalk-') || target.startsWith('maker-') || target.startsWith('fun-'))){ overlayDownloader.classList.remove('hidden'); openDownloader(el.dataset.platform); }
   });
 });
 
