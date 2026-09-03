@@ -187,6 +187,35 @@ async function stalkRobloxDl(usernameInput) {
   }
 }
 
+// FUN: Cek Arti Nama
+async function artiNamaDl(namaInput) {
+  try {
+    const nama = (namaInput || '').trim();
+    if (!nama) throw new Error('Nama belum diisi.');
+
+    const endpoint = `https://api.azbry.com/api/fun/cekartinama?nama=${encodeURIComponent(nama)}`;
+    const response = await axios.get(endpoint, { headers: { Accept: 'application/json' } });
+    const resData = response.data;
+
+    if (!resData.success) {
+      throw new Error(resData.message || 'API menolak permintaan.');
+    }
+    if (!resData.result || !resData.result.message) {
+      throw new Error('Data arti nama kosong dari API.');
+    }
+
+    const msg = resData.result.message;
+    return {
+      nama: (msg.nama && msg.nama.nama) || nama,
+      arti: msg.arti || '',
+      catatan: msg.catatan || ''
+    };
+  } catch (e) {
+    const errorMessage = e.response?.data?.message || e.message || 'Gagal mengambil arti nama.';
+    throw new Error(errorMessage);
+  }
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'ganti-secret-ini-di-env';
@@ -279,6 +308,9 @@ const tools = {
   maker: [
     { icon: '<i data-lucide="wallet"></i>', name: 'Fake DANA', sub: 'Bikin screenshot saldo DANA', badge: 'BARU', open: 'maker-fakedana', platform: 'fakedana' },
     { icon: '<i data-lucide="gamepad-2"></i>', name: 'Fake FF Profile', sub: 'Bikin screenshot profil Free Fire', badge: 'BARU', open: 'maker-fakeff', platform: 'fakeff' }
+  ],
+  fun: [
+    { icon: '<i data-lucide="sparkles"></i>', name: 'Arti Nama', sub: 'Cek arti dari sebuah nama', badge: 'BARU', open: 'fun-artinama', platform: 'artinama' }
   ]
 };
 
@@ -629,6 +661,8 @@ app.post('/api/download', express.json(), async (req, res) => {
       result = await stalkGithubDl(url);
     } else if (platform === 'stalkroblox') {
       result = await stalkRobloxDl(url);
+    } else if (platform === 'artinama') {
+      result = await artiNamaDl(url);
     } else {
       return res.status(400).json({ ok: false, message: `Scraper untuk ${platform} belum dipasang.` });
     }
